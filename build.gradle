@@ -39,11 +39,6 @@ repositories
     }
 }
 
-dependencies
-{
-    compile 'artemislib:ArtemisLib:1.12.2:v1.0.6'
-}
-
 processResources
 {
     inputs.property "version", project.version
