@@ -5,10 +5,10 @@ import com.artemis.artemislib.compatibilities.sizeCap.SizeCapPro;
 import com.artemis.artemislib.util.attributes.ArtemisLibAttributes;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.passive.AbstractHorse;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -24,9 +24,9 @@ public class AttachAttributes
 	@SubscribeEvent
 	public void attachAttributes(EntityEvent.EntityConstructing event)
 	{
-		if(event.getEntity() instanceof EntityLivingBase)
+		if(event.getEntity() instanceof LivingEntity)
 		{
-			final EntityLivingBase entity = (EntityLivingBase) event.getEntity();
+			final LivingEntity entity = (LivingEntity) event.getEntity();
 			final AbstractAttributeMap map = entity.getAttributeMap();
 
 			map.registerAttribute(ArtemisLibAttributes.ENTITY_HEIGHT);
@@ -37,7 +37,7 @@ public class AttachAttributes
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event)
 	{
-		final EntityPlayer player = event.player;
+		final PlayerEntity player = event.player;
 		if(player.hasCapability(SizeCapPro.sizeCapability, null))
 		{
 			final ISizeCap cap = player.getCapability(SizeCapPro.sizeCapability, null);
@@ -94,7 +94,7 @@ public class AttachAttributes
 					final double d0 = width / 2.0D;
 					final AxisAlignedBB aabb = player.getEntityBoundingBox();
 					player.setEntityBoundingBox(new AxisAlignedBB(player.posX - d0, aabb.minY, player.posZ - d0,
-							player.posX + d0, aabb.minY + player.height, player.posZ + d0));
+							player.posX + d0, aabb.minY + player.getHeight(), player.posZ + d0));
 				}
 			}
 			else /* If the Entity Does not have any Modifiers */
@@ -119,8 +119,8 @@ public class AttachAttributes
 	public void onLivingUpdate(LivingUpdateEvent event)
 	{
 
-		final EntityLivingBase entity = event.getEntityLiving();
-		if(!(entity instanceof EntityPlayer))
+		final LivingEntity entity = event.getEntityLiving();
+		if(!(entity instanceof PlayerEntity))
 		{
 			if(entity.hasCapability(SizeCapPro.sizeCapability, null))
 			{
@@ -139,7 +139,7 @@ public class AttachAttributes
 					/* If the Entity Does have a Modifier get it's size before changing it's size */
 					if(cap.getTrans() != true)
 					{
-						cap.setDefaultHeight(entity.height);
+						cap.setDefaultHeight(entity.getHeight());
 						cap.setDefaultWidth(entity.width);
 						cap.setTrans(true);
 					}
@@ -155,7 +155,7 @@ public class AttachAttributes
 						final double d0 = width / 2.0D;
 						final AxisAlignedBB aabb = entity.getEntityBoundingBox();
 						entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - d0, aabb.minY, entity.posZ - d0,
-								entity.posX + d0, aabb.minY + entity.height, entity.posZ + d0));
+								entity.posX + d0, aabb.minY + entity.getHeight(), entity.posZ + d0));
 					}
 				}
 				else /* If the Entity Does not have any Modifiers */
@@ -176,11 +176,11 @@ public class AttachAttributes
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public void onEntityRenderPre(RenderLivingEvent.Pre event)
 	{
-		final EntityLivingBase entity = event.getEntity();
+		final LivingEntity entity = event.getEntity();
 		
 		if(entity.hasCapability(SizeCapPro.sizeCapability, null))
 		{
@@ -188,7 +188,7 @@ public class AttachAttributes
 			
 			if(cap.getTrans() == true)
 			{
-				float scaleHeight = entity.height / cap.getDefaultHeight();
+				float scaleHeight = entity.getHeight() / cap.getDefaultHeight();
 				float scaleWidth = entity.width / cap.getDefaultWidth();
 				
 				GlStateManager.pushMatrix();
@@ -198,9 +198,9 @@ public class AttachAttributes
 			}
 		}
 
-		if(entity instanceof EntityPlayer)
+		if(entity instanceof PlayerEntity)
 		{
-			final EntityPlayer player = (EntityPlayer) entity;
+			final PlayerEntity player = (PlayerEntity) entity;
 			
 			if(player.getRidingEntity() instanceof AbstractHorse)
 			{
@@ -210,11 +210,11 @@ public class AttachAttributes
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public void onLivingRenderPost(RenderLivingEvent.Post event)
 	{
-		final EntityLivingBase entity = event.getEntity();
+		final LivingEntity entity = event.getEntity();
 		
 		if(entity.hasCapability(SizeCapPro.sizeCapability, null))
 		{

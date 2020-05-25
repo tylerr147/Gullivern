@@ -8,25 +8,22 @@ import com.artemis.artemislib.network.NetworkHandler;
 import com.artemis.artemislib.util.AttachAttributes;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class CommonProxy
 {
 
-	public void preInit(FMLPreInitializationEvent event)
+	public void preInit(FMLCommonSetupEvent event)
 	{
 		NetworkHandler.init();
 		Capabilities.init();
-	}
-
-	public void init(FMLInitializationEvent event)
-	{
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		MinecraftForge.EVENT_BUS.register(new AttachAttributes());
 	}
@@ -49,12 +46,12 @@ public class CommonProxy
 	}
 
 	@Nullable
-	public EntityLivingBase getEntityLivingBase(MessageContext context, int entityID)
+	public LivingEntity getEntityLiving(MessageContext context, int entityID)
 	{
 		if(context.side.isServer())
 		{
 			final Entity entity = context.getServerHandler().player.world.getEntityByID(entityID);
-			return entity instanceof EntityLivingBase ? (EntityLivingBase) entity : null;
+			return entity instanceof LivingEntity ? (LivingEntity) entity : null;
 		}
 		throw new WrongSideException("Tried to get the player from a client-side MessageContext on the dedicated server");
 	}

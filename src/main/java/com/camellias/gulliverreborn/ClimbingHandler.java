@@ -7,9 +7,9 @@ import net.minecraft.block.BlockSlab.EnumBlockHalf;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockStairs.EnumHalf;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -18,7 +18,7 @@ public class ClimbingHandler
 	// -----ClimbingHandler.java was made by XzeroAir, so go check him out, as he's waaaay more talented than me.-----//
 		// XzeroAir: I'm Not Really //
 
-		public static boolean movingForward(EntityLivingBase player, EnumFacing facing) {
+		public static boolean movingForward(LivingEntity player, Direction facing) {
 			if (((facing.getDirectionVec().getX() * player.motionX) > 0) || ((facing.getDirectionVec().getZ() * player.motionZ) > 0)) {
 				return true;
 			}
@@ -42,7 +42,7 @@ public class ClimbingHandler
 			return !iblockstate.getBlock().isNormalCube(iblockstate, world, pos);
 		}
 
-		public static boolean canClimb(EntityPlayer player, EnumFacing facing) {
+		public static boolean canClimb(PlayerEntity player, Direction facing) {
 			final World world = player.getEntityWorld();
 			final BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
 			final IBlockState f = world.getBlockState(pos.add(0, 0, 0).offset(facing));

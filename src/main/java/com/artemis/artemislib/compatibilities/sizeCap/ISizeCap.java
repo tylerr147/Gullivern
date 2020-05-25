@@ -1,6 +1,6 @@
 package com.artemis.artemislib.compatibilities.sizeCap;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public interface ISizeCap {
 
@@ -16,8 +16,8 @@ public interface ISizeCap {
 
 	void setDefaultHeight(float height);
 
-	NBTTagCompound saveNBT();
+	CompoundNBT saveNBT();
 
-	void loadNBT(NBTTagCompound compound);
+	void loadNBT(CompoundNBT compound);
 
 }

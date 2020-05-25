@@ -1,53 +1,42 @@
 package com.artemis.artemislib.compatibilities.sizeCap;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 
-public class SizeCapPro implements ICapabilitySerializable<NBTTagCompound>{
+public class SizeCapPro implements ICapabilitySerializable<CompoundNBT> {
 
-	private ISizeCap capabilitySize = null;
+    private ISizeCap capabilitySize = null;
 
-	public SizeCapPro()
-	{
-		this.capabilitySize = new SizeDefaultCap();
-	}
+    public SizeCapPro() {
+        this.capabilitySize = new SizeDefaultCap();
+    }
 
-	public SizeCapPro(ISizeCap capability)
-	{
-		this.capabilitySize = capability;
-	}
+    public SizeCapPro(ISizeCap capability) {
+        this.capabilitySize = capability;
+    }
 
-	@CapabilityInject(ISizeCap.class)
-	public static final Capability<ISizeCap> sizeCapability = null;
+    @CapabilityInject(ISizeCap.class)
+    public static final Capability<ISizeCap> sizeCapability = null;
 
-	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing)
-	{
-		return capability == sizeCapability;
-	}
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
+        if (sizeCapability != null && capability == sizeCapability) {
+            return LazyOptional.of(() -> (T) this.capabilitySize);
+        }
+        return LazyOptional.empty();
+    }
 
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing)
-	{
-		if (sizeCapability != null && capability == sizeCapability)
-		{
-			return (T) this.capabilitySize;
-		}
-		return null;
-	}
+    @Override
+    public CompoundNBT serializeNBT() {
+        return this.capabilitySize.saveNBT();
+    }
 
-	@Override
-	public NBTTagCompound serializeNBT()
-	{
-		return this.capabilitySize.saveNBT();
-	}
-
-	@Override
-	public void deserializeNBT(NBTTagCompound nbt)
-	{
-		this.capabilitySize.loadNBT(nbt);
-	}
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+        this.capabilitySize.loadNBT(nbt);
+    }
 }

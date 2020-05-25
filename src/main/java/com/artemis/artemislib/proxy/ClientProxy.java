@@ -5,8 +5,8 @@ import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.client.model.ModelLoader;
@@ -38,11 +38,11 @@ public class ClientProxy extends CommonProxy
 
 	@Override
 	@Nullable
-	public EntityLivingBase getEntityLivingBase(MessageContext context, int entityID)
+	public LivingEntity getEntityLiving(MessageContext context, int entityID)
 	{
-		final EntityPlayer player = context.side.isClient() ? Minecraft.getMinecraft().player : context.getServerHandler().player;
+		final PlayerEntity player = context.side.isClient() ? Minecraft.getMinecraft().player : context.getServerHandler().player;
 		final Entity entity = player.world.getEntityByID(entityID);
-		return entity instanceof EntityLivingBase ? (EntityLivingBase) entity : null;
+		return entity instanceof LivingEntity ? (LivingEntity) entity : null;
 	}
 
 	@Override

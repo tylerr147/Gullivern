@@ -1,6 +1,6 @@
 package com.artemis.artemislib.compatibilities.sizeCap;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public class SizeDefaultCap implements ISizeCap {
 
@@ -53,13 +53,13 @@ public class SizeDefaultCap implements ISizeCap {
 	}
 
 	@Override
-	public NBTTagCompound saveNBT()
+	public CompoundNBT saveNBT()
 	{
-		return (NBTTagCompound) SizeCapStorage.storage.writeNBT(SizeCapPro.sizeCapability, this, null);
+		return (CompoundNBT) SizeCapStorage.storage.writeNBT(SizeCapPro.sizeCapability, this, null);
 	}
 
 	@Override
-	public void loadNBT(NBTTagCompound compound)
+	public void loadNBT(CompoundNBT compound)
 	{
 		SizeCapStorage.storage.readNBT(SizeCapPro.sizeCapability, this, null, compound);
 	}
