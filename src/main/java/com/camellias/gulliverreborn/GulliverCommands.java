@@ -36,7 +36,7 @@ public class GulliverCommands {
 
     public void register(CommandDispatcher<CommandSource> dispatcher) {
         LiteralCommandNode<CommandSource> node = dispatcher.register(
-                LiteralArgumentBuilder.<CommandSource>literal(GulliverReborn.MODID)
+                LiteralArgumentBuilder.<CommandSource>literal("size")
                         .requires(cs -> cs.hasPermissionLevel(0))
                         .then(
                                 RequiredArgumentBuilder.<CommandSource, Float>argument("size", FloatArgumentType.floatArg(0.125F))
@@ -53,7 +53,7 @@ public class GulliverCommands {
                                         })
                                         .then(
                                                 RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("entities", EntityArgument.entities())
-                                                        .requires(cs -> cs.hasPermissionLevel(4))
+                                                        .requires(cs -> cs.hasPermissionLevel(2))
                                                         .executes(ctx -> {
                                                             Collection<? extends Entity> entities = EntityArgument.getEntities(ctx, "entities");
                                                             float size = FloatArgumentType.getFloat(ctx, "size");
@@ -87,6 +87,7 @@ public class GulliverCommands {
                                         )
                         )
         );
+        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal(GulliverReborn.MODID).redirect(node));
     }
 
     public void changeSize(LivingEntity sender, float size) {
