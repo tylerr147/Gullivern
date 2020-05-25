@@ -17,9 +17,13 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.*;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GulliverCommands {
     private static UUID uuidHeight = UUID.fromString("5440b01a-974f-4495-bb9a-c7c87424bca4");
@@ -40,6 +44,11 @@ public class GulliverCommands {
                                             PlayerEntity sender = ctx.getSource().asPlayer();
                                             float size = FloatArgumentType.getFloat(ctx, "size");
                                             changeSize(sender, size);
+                                            ctx.getSource().sendFeedback(
+                                                    sender.getDisplayName()
+                                                            .appendSibling(new StringTextComponent(" set their size to " + size)),
+                                                    false
+                                            );
                                             return 1;
                                         })
                                         .then(
@@ -48,17 +57,38 @@ public class GulliverCommands {
                                                         .executes(ctx -> {
                                                             Collection<? extends Entity> entities = EntityArgument.getEntities(ctx, "entities");
                                                             float size = FloatArgumentType.getFloat(ctx, "size");
-                                                            entities.stream()
+                                                            Map<String, List<LivingEntity>> listEntity = entities.stream()
                                                                     .filter(LivingEntity.class::isInstance)
                                                                     .map(LivingEntity.class::cast)
-                                                                    .forEach(entity -> changeSize(entity, size));
+                                                                    .peek(entity -> changeSize(entity, size))
+                                                                    .collect(Collectors.groupingBy(entity -> entity.getDisplayName().getFormattedText()));
+                                                            ITextComponent text = TextComponentUtils.makeList(listEntity.entrySet(), entry -> {
+                                                                int length = entry.getValue().size();
+                                                                if (length <= 0)
+                                                                    return new StringTextComponent("");
+                                                                ITextComponent name = entry.getValue().get(0).getDisplayName();
+                                                                if (length > 1)
+                                                                    return new StringTextComponent("")
+                                                                            .appendSibling(new StringTextComponent(length + "×")
+                                                                                    .setStyle(new Style().setColor(TextFormatting.GRAY)))
+                                                                            .appendSibling(name);
+                                                                return name;
+                                                            });
+                                                            ctx.getSource().sendFeedback(
+                                                                    new StringTextComponent("")
+                                                                            .appendSibling(new StringTextComponent("[").setStyle(new Style().setColor(TextFormatting.GRAY)))
+                                                                            .appendSibling(text)
+                                                                            .appendSibling(new StringTextComponent("]").setStyle(new Style().setColor(TextFormatting.GRAY)))
+                                                                            .appendSibling(new StringTextComponent(" set their size to " + size)),
+                                                                    true
+                                                            );
                                                             return 1;
                                                         })
                                         )
                         )
         );
     }
-    
+
     public void changeSize(LivingEntity sender, float size) {
         Multimap<String, AttributeModifier> attributes = HashMultimap.create();
         Multimap<String, AttributeModifier> removeableAttributes = HashMultimap.create();
@@ -92,7 +122,5 @@ public class GulliverCommands {
 
         sender.getAttributes().applyAttributeModifiers(attributes);
         sender.setHealth(sender.getMaxHealth());
-
-        GulliverReborn.LOGGER.info(sender.getDisplayName().getFormattedText() + " set their size to " + size);
     }
 }
