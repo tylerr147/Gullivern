@@ -11,10 +11,11 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.command.arguments.EntitySelector;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.Collection;
@@ -42,28 +43,23 @@ public class GulliverCommands {
                                             return 1;
                                         })
                                         .then(
-                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("players", EntityArgument.players())
+                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("entities", EntityArgument.entities())
                                                         .requires(cs -> cs.hasPermissionLevel(4))
                                                         .executes(ctx -> {
-                                                            Collection<ServerPlayerEntity> players = EntityArgument.getPlayers(ctx, "players");
+                                                            Collection<? extends Entity> entities = EntityArgument.getEntities(ctx, "entities");
                                                             float size = FloatArgumentType.getFloat(ctx, "size");
-                                                            players.forEach(player -> changeSize(player, size));
+                                                            entities.stream()
+                                                                    .filter(LivingEntity.class::isInstance)
+                                                                    .map(LivingEntity.class::cast)
+                                                                    .forEach(entity -> changeSize(entity, size));
                                                             return 1;
                                                         })
                                         )
                         )
         );
     }
-
-	/*
-	@Override
-	public String getUsage(ICommandSender sender)
-	{
-		return "gulliverreborn.commands.mysize.usage";
-	}
-	 */
-
-    public void changeSize(PlayerEntity sender, float size) {
+    
+    public void changeSize(LivingEntity sender, float size) {
         Multimap<String, AttributeModifier> attributes = HashMultimap.create();
         Multimap<String, AttributeModifier> removeableAttributes = HashMultimap.create();
         Multimap<String, AttributeModifier> removeableAttributes2 = HashMultimap.create();
@@ -71,15 +67,15 @@ public class GulliverCommands {
         attributes.put(Attributes.ENTITY_HEIGHT.getName(), new AttributeModifier(uuidHeight, "Player Height", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
         attributes.put(Attributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, Config.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-        if (Config.FEATURE.SPEED_MODIFIER.get())
+        if (Config.MODIFIER.SPEED_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.MOVEMENT_SPEED.getName(), new AttributeModifier(uuidSpeed, "Player Speed", (size - 1) / 2, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.FEATURE.REACH_MODIFIER.get())
+        if (Config.MODIFIER.REACH_MODIFIER.get())
             removeableAttributes.put(PlayerEntity.REACH_DISTANCE.getName(), new AttributeModifier(uuidReach1, "Player Reach 1", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.FEATURE.REACH_MODIFIER.get())
+        if (Config.MODIFIER.REACH_MODIFIER.get())
             removeableAttributes2.put(PlayerEntity.REACH_DISTANCE.getName(), new AttributeModifier(uuidReach2, "Player Reach 2", -MathHelper.clamp(size - 1, 0.33, Double.MAX_VALUE), AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.FEATURE.STRENGTH_MODIFIER.get())
+        if (Config.MODIFIER.STRENGTH_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(uuidStrength, "Player Strength", size - 1, AttributeModifier.Operation.ADDITION));
-        if (Config.FEATURE.HEALTH_MODIFIER.get())
+        if (Config.MODIFIER.HEALTH_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(uuidHealth, "Player Health", (size - 1) * Config.GENERAL.HEALTH_MULTIPLIER.get(), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (size > 1) {

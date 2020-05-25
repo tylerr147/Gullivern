@@ -28,6 +28,38 @@ public class Config {
     }
 
     public static class Modifier {
+        public final ForgeConfigSpec.ConfigValue<Boolean> SPEED_MODIFIER;
+        public final ForgeConfigSpec.ConfigValue<Boolean> REACH_MODIFIER;
+        public final ForgeConfigSpec.ConfigValue<Boolean> STRENGTH_MODIFIER;
+        public final ForgeConfigSpec.ConfigValue<Boolean> HEALTH_MODIFIER;
+        public final ForgeConfigSpec.ConfigValue<Boolean> HARVEST_MODIFIER;
+        public final ForgeConfigSpec.ConfigValue<Boolean> JUMP_MODIFIER;
+
+        public Modifier(ForgeConfigSpec.Builder builder) {
+            builder.push("Modifier");
+            SPEED_MODIFIER = builder
+                    .comment("Enable/disable the speed modifier")
+                    .define("SPEED_MODIFIER", true);
+            REACH_MODIFIER = builder
+                    .comment("Enable/disable the reach modifier")
+                    .define("REACH_MODIFIER", true);
+            STRENGTH_MODIFIER = builder
+                    .comment("Enable/disable the strength modifier")
+                    .define("STRENGTH_MODIFIER", true);
+            HEALTH_MODIFIER = builder
+                    .comment("Enable/disable the health modifier")
+                    .define("HEALTH_MODIFIER", true);
+            HARVEST_MODIFIER = builder
+                    .comment("Enable/disable the harvest speed modifier")
+                    .define("HARVEST_MODIFIER", true);
+            JUMP_MODIFIER = builder
+                    .comment("Enable/disable the jump height modifier")
+                    .define("JUMP_MODIFIER", true);
+            builder.pop();
+        }
+    }
+
+    public static class Feature {
         public final ForgeConfigSpec.ConfigValue<Boolean> DO_ADJUSTED_RENDER;
         public final ForgeConfigSpec.ConfigValue<Boolean> PICKUP_SMALL_ENTITIES;
         public final ForgeConfigSpec.ConfigValue<Boolean> RIDE_BIG_ENTITIES;
@@ -41,8 +73,8 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<Boolean> GIANTS_CRUSH_ENTITIES;
         public final ForgeConfigSpec.ConfigValue<Boolean> SCALED_FALL_DAMAGE;
 
-        public Modifier(ForgeConfigSpec.Builder builder) {
-            builder.push("Modifier");
+        public Feature(ForgeConfigSpec.Builder builder) {
+            builder.push("Feature");
             DO_ADJUSTED_RENDER = builder
                     .comment("Player render is more normal at small sizes, but may cause problems with other mods")
                     .define("DO_ADJUSTED_RENDER", true);
@@ -79,38 +111,6 @@ public class Config {
             SCALED_FALL_DAMAGE = builder
                     .comment("Enable/disable scaled fall damage")
                     .define("SCALED_FALL_DAMAGE", true);
-            builder.pop();
-        }
-    }
-
-    public static class Feature {
-        public final ForgeConfigSpec.ConfigValue<Boolean> SPEED_MODIFIER;
-        public final ForgeConfigSpec.ConfigValue<Boolean> REACH_MODIFIER;
-        public final ForgeConfigSpec.ConfigValue<Boolean> STRENGTH_MODIFIER;
-        public final ForgeConfigSpec.ConfigValue<Boolean> HEALTH_MODIFIER;
-        public final ForgeConfigSpec.ConfigValue<Boolean> HARVEST_MODIFIER;
-        public final ForgeConfigSpec.ConfigValue<Boolean> JUMP_MODIFIER;
-
-        public Feature(ForgeConfigSpec.Builder builder) {
-            builder.push("Feature");
-            SPEED_MODIFIER = builder
-                    .comment("Enable/disable the speed modifier")
-                    .define("SPEED_MODIFIER", true);
-            REACH_MODIFIER = builder
-                    .comment("Enable/disable the reach modifier")
-                    .define("REACH_MODIFIER", true);
-            STRENGTH_MODIFIER = builder
-                    .comment("Enable/disable the strength modifier")
-                    .define("STRENGTH_MODIFIER", true);
-            HEALTH_MODIFIER = builder
-                    .comment("Enable/disable the health modifier")
-                    .define("HEALTH_MODIFIER", true);
-            HARVEST_MODIFIER = builder
-                    .comment("Enable/disable the harvest speed modifier")
-                    .define("HARVEST_MODIFIER", true);
-            JUMP_MODIFIER = builder
-                    .comment("Enable/disable the jump height modifier")
-                    .define("JUMP_MODIFIER", true);
             builder.pop();
         }
     }

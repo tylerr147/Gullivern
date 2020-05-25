@@ -157,23 +157,17 @@ public class AttributesHandler {
             if (cap.getTrans() == true) {
                 float scaleHeight = entity.getHeight() / cap.getDefaultHeight();
                 float scaleWidth = entity.getWidth() / cap.getDefaultWidth();
-                Vec3d pos = entity.getPositionVec();
 
-                RenderSystem.pushMatrix();
-                RenderSystem.scalef(scaleWidth, scaleHeight, scaleWidth);
-                RenderSystem.translatef((float) pos.getX() / scaleWidth - (float) pos.getX(),
-                        (float) pos.getY() / scaleHeight - (float) pos.getY(), (float) pos.getZ() / scaleWidth - (float) pos.getZ());
+                if (entity instanceof PlayerEntity) {
+                    if (entity.getRidingEntity() instanceof AbstractHorseEntity) {
+                        event.getMatrixStack().translate(0, (1-scaleHeight) * .62F, 0);
+                    }
+                }
+
+                event.getMatrixStack().push();
+                event.getMatrixStack().scale(scaleWidth, scaleHeight, scaleWidth);
             }
         });
-
-        if (entity instanceof PlayerEntity) {
-            final PlayerEntity player = (PlayerEntity) entity;
-
-            if (player.getRidingEntity() instanceof AbstractHorseEntity) {
-                //GlStateManager.translate(0F, (1.7F-scaleHeight)*scaleHeight, 0F);
-                //GlStateManager.translate(0, scaleHeight * 2, 0);
-            }
-        }
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -184,7 +178,7 @@ public class AttributesHandler {
         LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
             if (cap.getTrans() == true) {
-                RenderSystem.popMatrix();
+                event.getMatrixStack().pop();
             }
         });
     }
