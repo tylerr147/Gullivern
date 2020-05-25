@@ -20,7 +20,7 @@ public class CapabilitiesHandler {
             final float defaultWidth = entity.getWidth();
             final float defaultHeight = entity.getHeight();
             final ISizeCap cap = new SizeDefaultCap(transformed, defaultWidth, defaultHeight);
-            event.addCapability(new ResourceLocation(GulliverReborn.MODID, "Capability"), new SizeCapPro(cap));
+            event.addCapability(new ResourceLocation(GulliverReborn.MODID, "capability"), new SizeCapPro(cap));
         }
     }
 }

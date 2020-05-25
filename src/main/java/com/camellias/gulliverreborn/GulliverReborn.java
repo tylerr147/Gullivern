@@ -48,6 +48,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -60,14 +61,17 @@ public class GulliverReborn {
 
     public static CommonProxy proxy = DistExecutor.<CommonProxy>runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 
+    public GulliverReborn() {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
     public static DamageSource causeCrushingDamage(LivingEntity entity) {
         return new EntityDamageSource(MODID + ".crushing", entity);
     }
 
-    @SubscribeEvent
     public void preInit(FMLCommonSetupEvent event) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-        MinecraftForge.EVENT_BUS.register(new GulliverReborn());
         proxy.preInit(event);
     }
 
@@ -81,7 +85,7 @@ public class GulliverReborn {
         if (event.getEntityLiving() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
 
-            if (Config.SCALED_FALL_DAMAGE) event.setDistance(event.getDistance() / (player.getHeight() * 0.6F));
+            if (Config.MODIFIER.SCALED_FALL_DAMAGE.get()) event.setDistance(event.getDistance() / (player.getHeight() * 0.6F));
             if (player.getHeight() < 0.45F) event.setDistance(0);
         }
     }
@@ -92,7 +96,7 @@ public class GulliverReborn {
         World world = event.getEntityLiving().world;
 
         for (LivingEntity entities : world.getEntitiesWithinAABB(LivingEntity.class, entity.getBoundingBox())) {
-            if (!entity.isSneaking() && Config.GIANTS_CRUSH_ENTITIES) {
+            if (!entity.isSneaking() && Config.MODIFIER.GIANTS_CRUSH_ENTITIES.get()) {
                 if (entity.getHeight() / entities.getHeight() >= 4 && entities.getRidingEntity() != entity) {
                     entities.attackEntityFrom(causeCrushingDamage(entity), entity.getHeight() - entities.getHeight());
                 }
@@ -102,7 +106,7 @@ public class GulliverReborn {
 
     @SubscribeEvent
     public void onTargetEntity(LivingSetAttackTargetEvent event) {
-        if (event.getTarget() instanceof PlayerEntity && event.getEntityLiving() instanceof MobEntity && Config.SMALL_IS_INVISIBLE_TO_NONCATS_OR_NONSPIDERS) {
+        if (event.getTarget() instanceof PlayerEntity && event.getEntityLiving() instanceof MobEntity && Config.MODIFIER.SMALL_IS_INVISIBLE_TO_NONCATS_OR_NONSPIDERS.get()) {
             PlayerEntity player = (PlayerEntity) event.getTarget();
             MobEntity entity = (MobEntity) event.getEntityLiving();
 
@@ -138,7 +142,7 @@ public class GulliverReborn {
 			 */
 
             if (!player.abilities.isFlying
-                    && Config.PLANTS_SLOW_SMALL_DOWN
+                    && Config.MODIFIER.PLANTS_SLOW_SMALL_DOWN.get()
                     && (block instanceof BushBlock)
                     || (block instanceof CarpetBlock)
                     || (block instanceof FlowerBlock)
@@ -158,7 +162,7 @@ public class GulliverReborn {
             boolean canPass = state.allowsMovement(world, pos.offset(facing), PathType.LAND);
 
             if (ClimbingHandler.canClimb(player, facing)
-                    && Config.CLIMB_SOME_BLOCKS
+                    && Config.MODIFIER.CLIMB_SOME_BLOCKS.get()
                     && (block == Blocks.DIRT)
                     || (block instanceof GrassBlock)
                     || (block instanceof MyceliumBlock)
@@ -184,7 +188,7 @@ public class GulliverReborn {
             }
 
             for (ItemStack stack : player.getHeldEquipment()) {
-                if (stack.getItem() == Items.SLIME_BALL || stack.getItem() == Item.getItemFromBlock(Blocks.SLIME_BLOCK) && Config.CLIMB_WITH_SLIME) {
+                if (stack.getItem() == Items.SLIME_BALL || stack.getItem() == Item.getItemFromBlock(Blocks.SLIME_BLOCK) && Config.MODIFIER.CLIMB_WITH_SLIME.get()) {
                     if (ClimbingHandler.canClimb(player, facing)) {
                         if (player.collidedHorizontally) {
                             if (!player.isSneaking()) {
@@ -200,7 +204,7 @@ public class GulliverReborn {
                     }
                 }
 
-                if (stack.getItem() == Items.PAPER && Config.GLIDE_WITH_PAPER) {
+                if (stack.getItem() == Items.PAPER && Config.MODIFIER.GLIDE_WITH_PAPER.get()) {
                     if (!player.onGround) {
                         player.jumpMovementFactor = 0.02F * 1.75F;
                         player.fallDistance = 0;
@@ -226,7 +230,7 @@ public class GulliverReborn {
                                     (world.getBlockState(new BlockPos(player.getPosX(), blockY, player.getPosZ())).getBlock() == Blocks.FIRE) ||
                                     (world.getBlockState(new BlockPos(player.getPosX(), blockY, player.getPosZ())).getBlock() == Blocks.FURNACE) ||
                                     (world.getBlockState(new BlockPos(player.getPosX(), blockY, player.getPosZ())).getBlock() == Blocks.MAGMA_BLOCK) &&
-                                            Config.HOT_BLOCKS_GIVE_LIFT) {
+                                            Config.MODIFIER.HOT_BLOCKS_GIVE_LIFT.get()) {
                                 player.setMotion(player.getMotion().add(0, MathHelper.clamp(0.07D, Double.MIN_VALUE, 0.1D), 0));
                             }
                         }
@@ -242,7 +246,7 @@ public class GulliverReborn {
             LivingEntity target = (LivingEntity) event.getTarget();
             PlayerEntity player = event.getPlayer();
 
-            if (target.getHeight() / 2 >= player.getHeight() && Config.RIDE_BIG_ENTITIES) {
+            if (target.getHeight() / 2 >= player.getHeight() && Config.MODIFIER.RIDE_BIG_ENTITIES.get()) {
                 for (ItemStack stack : player.getHeldEquipment()) {
                     if (stack.getItem() == Items.STRING) {
                         player.startRiding(target);
@@ -250,7 +254,7 @@ public class GulliverReborn {
                 }
             }
 
-            if (target.getHeight() * 2 <= player.getHeight() && Config.PICKUP_SMALL_ENTITIES) {
+            if (target.getHeight() * 2 <= player.getHeight() && Config.MODIFIER.PICKUP_SMALL_ENTITIES.get()) {
                 target.startRiding(player);
             }
 
@@ -266,7 +270,7 @@ public class GulliverReborn {
 
     @SubscribeEvent
     public void onEntityJump(LivingJumpEvent event) {
-        if (event.getEntityLiving() instanceof PlayerEntity && Config.JUMP_MODIFIER) {
+        if (event.getEntityLiving() instanceof PlayerEntity && Config.FEATURE.JUMP_MODIFIER.get()) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             float jumpHeight = (player.getHeight() / 1.8F);
 
@@ -286,7 +290,7 @@ public class GulliverReborn {
     public void onHarvest(BreakSpeed event) {
         PlayerEntity player = event.getPlayer();
 
-        if (Config.HARVEST_MODIFIER) event.setNewSpeed(event.getOriginalSpeed() * (player.getHeight() / 1.8F));
+        if (Config.FEATURE.HARVEST_MODIFIER.get()) event.setNewSpeed(event.getOriginalSpeed() * (player.getHeight() / 1.8F));
     }
 
     @SubscribeEvent
@@ -324,7 +328,7 @@ public class GulliverReborn {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onEntityRenderPre(RenderLivingEvent.Pre event) {
-        if (Config.DO_ADJUSTED_RENDER) {
+        if (Config.MODIFIER.DO_ADJUSTED_RENDER.get()) {
             final LivingEntity entity = event.getEntity();
 
             LazyOptional<ISizeCap> capLazy = entity.getCapability(SizeCapPro.sizeCapability);
@@ -347,7 +351,7 @@ public class GulliverReborn {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onLivingRenderPost(RenderLivingEvent.Post event) {
-        if (Config.DO_ADJUSTED_RENDER) {
+        if (Config.MODIFIER.DO_ADJUSTED_RENDER.get()) {
             final LivingEntity entity = event.getEntity();
 
             LazyOptional<ISizeCap> capLazy = entity.getCapability(SizeCapPro.sizeCapability);

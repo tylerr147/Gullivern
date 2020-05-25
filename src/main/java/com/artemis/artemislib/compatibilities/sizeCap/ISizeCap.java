@@ -4,20 +4,20 @@ import net.minecraft.nbt.CompoundNBT;
 
 public interface ISizeCap {
 
-	boolean getTrans();
+    boolean getTrans();
 
-	void setTrans(boolean transformed);
+    void setTrans(boolean transformed);
 
-	float getDefaultWidth();
+    float getDefaultWidth();
 
-	void setDefaultWidth(float width);
+    void setDefaultWidth(float width);
 
-	float getDefaultHeight();
+    float getDefaultHeight();
 
-	void setDefaultHeight(float height);
+    void setDefaultHeight(float height);
 
-	CompoundNBT saveNBT();
+    CompoundNBT saveNBT();
 
-	void loadNBT(CompoundNBT compound);
+    void loadNBT(CompoundNBT compound);
 
 }

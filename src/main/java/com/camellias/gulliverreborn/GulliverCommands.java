@@ -41,16 +41,16 @@ public class GulliverCommands {
                                             changeSize(sender, size);
                                             return 1;
                                         })
-                        )
-                        .then(
-                                RequiredArgumentBuilder.<CommandSource, Float>argument("size", FloatArgumentType.floatArg(0.125F))
-                                        .then(RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("players", EntityArgument.players()))
-                                        .executes(ctx -> {
-                                            Collection<ServerPlayerEntity> players = EntityArgument.getPlayers(ctx, "players");
-                                            float size = FloatArgumentType.getFloat(ctx, "size");
-                                            players.forEach(player -> changeSize(player, size));
-                                            return 1;
-                                        })
+                                        .then(
+                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("players", EntityArgument.players())
+                                                        .requires(cs -> cs.hasPermissionLevel(4))
+                                                        .executes(ctx -> {
+                                                            Collection<ServerPlayerEntity> players = EntityArgument.getPlayers(ctx, "players");
+                                                            float size = FloatArgumentType.getFloat(ctx, "size");
+                                                            players.forEach(player -> changeSize(player, size));
+                                                            return 1;
+                                                        })
+                                        )
                         )
         );
     }
@@ -71,15 +71,15 @@ public class GulliverCommands {
         attributes.put(ArtemisLibAttributes.ENTITY_HEIGHT.getName(), new AttributeModifier(uuidHeight, "Player Height", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
         attributes.put(ArtemisLibAttributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, Config.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-        if (Config.SPEED_MODIFIER)
+        if (Config.FEATURE.SPEED_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.MOVEMENT_SPEED.getName(), new AttributeModifier(uuidSpeed, "Player Speed", (size - 1) / 2, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.REACH_MODIFIER)
+        if (Config.FEATURE.REACH_MODIFIER.get())
             removeableAttributes.put(PlayerEntity.REACH_DISTANCE.getName(), new AttributeModifier(uuidReach1, "Player Reach 1", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.REACH_MODIFIER)
+        if (Config.FEATURE.REACH_MODIFIER.get())
             removeableAttributes2.put(PlayerEntity.REACH_DISTANCE.getName(), new AttributeModifier(uuidReach2, "Player Reach 2", -MathHelper.clamp(size - 1, 0.33, Double.MAX_VALUE), AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.STRENGTH_MODIFIER)
+        if (Config.FEATURE.STRENGTH_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(uuidStrength, "Player Strength", size - 1, AttributeModifier.Operation.ADDITION));
-        if (Config.HEALTH_MODIFIER)
+        if (Config.FEATURE.HEALTH_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(uuidHealth, "Player Health", (size - 1) * Config.GENERAL.HEALTH_MULTIPLIER.get(), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (size > 1) {
@@ -94,6 +94,6 @@ public class GulliverCommands {
             sender.getAttributes().removeAttributeModifiers(removeableAttributes2);
         }
 
-        GulliverReborn.LOGGER.info(sender.getDisplayName() + " set their size to " + size);
+        GulliverReborn.LOGGER.info(sender.getDisplayName().getFormattedText() + " set their size to " + size);
     }
 }
