@@ -69,7 +69,7 @@ public class GulliverCommands {
         Multimap<String, AttributeModifier> removeableAttributes2 = HashMultimap.create();
 
         attributes.put(ArtemisLibAttributes.ENTITY_HEIGHT.getName(), new AttributeModifier(uuidHeight, "Player Height", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        attributes.put(ArtemisLibAttributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, Config.MAX_SIZE), AttributeModifier.Operation.MULTIPLY_TOTAL));
+        attributes.put(ArtemisLibAttributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, Config.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (Config.SPEED_MODIFIER)
             attributes.put(SharedMonsterAttributes.MOVEMENT_SPEED.getName(), new AttributeModifier(uuidSpeed, "Player Speed", (size - 1) / 2, AttributeModifier.Operation.MULTIPLY_TOTAL));
@@ -80,7 +80,7 @@ public class GulliverCommands {
         if (Config.STRENGTH_MODIFIER)
             attributes.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(uuidStrength, "Player Strength", size - 1, AttributeModifier.Operation.ADDITION));
         if (Config.HEALTH_MODIFIER)
-            attributes.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(uuidHealth, "Player Health", (size - 1) * Config.HEALTH_MULTIPLIER, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            attributes.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(uuidHealth, "Player Health", (size - 1) * Config.GENERAL.HEALTH_MULTIPLIER.get(), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (size > 1) {
             sender.getAttributes().applyAttributeModifiers(removeableAttributes);

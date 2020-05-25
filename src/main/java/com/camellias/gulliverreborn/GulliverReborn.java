@@ -5,7 +5,6 @@ import com.artemis.artemislib.compatibilities.sizeCap.SizeCapPro;
 import com.artemis.artemislib.proxy.ClientProxy;
 import com.artemis.artemislib.proxy.CommonProxy;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.block.*;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -53,16 +52,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nullable;
-import java.io.File;
-
 @Mod(GulliverReborn.MODID)
 public class GulliverReborn {
     public static final String MODID = "gulliver";
     public static final String NAME = "Gulliver-1.15.2";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
-    public static CommonProxy proxy = DistExecutor.<CommonProxy> runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+    public static CommonProxy proxy = DistExecutor.<CommonProxy>runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 
     public static DamageSource causeCrushingDamage(LivingEntity entity) {
         return new EntityDamageSource(MODID + ".crushing", entity);
@@ -231,7 +227,7 @@ public class GulliverReborn {
                                     (world.getBlockState(new BlockPos(player.getPosX(), blockY, player.getPosZ())).getBlock() == Blocks.FURNACE) ||
                                     (world.getBlockState(new BlockPos(player.getPosX(), blockY, player.getPosZ())).getBlock() == Blocks.MAGMA_BLOCK) &&
                                             Config.HOT_BLOCKS_GIVE_LIFT) {
-                                player.setMotion(player.getMotion().add(0, MathHelper.clamp(0.07D, Double.MIN_VALUE, 0.1D),0));
+                                player.setMotion(player.getMotion().add(0, MathHelper.clamp(0.07D, Double.MIN_VALUE, 0.1D), 0));
                             }
                         }
                     }
@@ -340,8 +336,8 @@ public class GulliverReborn {
                     if (scale < 0.4F) {
                         RenderSystem.pushMatrix();
                         RenderSystem.scalef(scale * 2.5F, 1, scale * 2.5F);
-                        RenderSystem.translatef((float)pos.getX() / scale * 2.5F - (float)pos.getX(),
-                                (float)pos.getY() / scale * 2.5F - (float)pos.getY(), (float)pos.getZ() / scale * 2.5F - (float)pos.getZ());
+                        RenderSystem.translatef((float) pos.getX() / scale * 2.5F - (float) pos.getX(),
+                                (float) pos.getY() / scale * 2.5F - (float) pos.getY(), (float) pos.getZ() / scale * 2.5F - (float) pos.getZ());
                     }
                 }
             });
