@@ -12,6 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.monster.SpiderEntity;
 import net.minecraft.entity.passive.OcelotEntity;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -39,6 +40,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -83,7 +85,8 @@ public class GulliverReborn {
         if (event.getEntityLiving() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
 
-            if (Config.FEATURE.SCALED_FALL_DAMAGE.get()) event.setDistance(event.getDistance() / (player.getHeight() * 0.6F));
+            if (Config.FEATURE.SCALED_FALL_DAMAGE.get())
+                event.setDistance(event.getDistance() / (player.getHeight() * 0.6F));
             if (player.getHeight() < 0.45F) event.setDistance(0);
         }
     }
@@ -255,13 +258,17 @@ public class GulliverReborn {
             if (target.getHeight() * 2 <= player.getHeight() && Config.FEATURE.PICKUP_SMALL_ENTITIES.get()) {
                 target.startRiding(player);
             }
+        }
+    }
 
-            if (player.getHeldItemMainhand().isEmpty() && player.isBeingRidden() && player.isSneaking()) {
-                for (Entity entities : player.getPassengers()) {
-                    if (entities instanceof LivingEntity) {
-                        entities.stopRiding();
-                    }
-                }
+    @SubscribeEvent
+    public void onPlayerEmptyClick(PlayerInteractEvent.RightClickEmpty event) {
+        PlayerEntity player = event.getPlayer();
+
+        if (player.getHeldItemMainhand().isEmpty() && player.isBeingRidden() && player.isSneaking()) {
+            for (Entity entity : player.getPassengers()) {
+                entity.stopRiding();
+                entity.addVelocity(0, -1, 0);
             }
         }
     }
@@ -288,7 +295,8 @@ public class GulliverReborn {
     public void onHarvest(BreakSpeed event) {
         PlayerEntity player = event.getPlayer();
 
-        if (Config.MODIFIER.HARVEST_MODIFIER.get()) event.setNewSpeed(event.getOriginalSpeed() * (player.getHeight() / 1.8F));
+        if (Config.MODIFIER.HARVEST_MODIFIER.get())
+            event.setNewSpeed(event.getOriginalSpeed() * (player.getHeight() / 1.8F));
     }
 
     @SubscribeEvent

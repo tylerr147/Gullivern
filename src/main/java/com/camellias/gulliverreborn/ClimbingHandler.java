@@ -14,33 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class ClimbingHandler {
-    // -----ClimbingHandler.java was made by XzeroAir, so go check him out, as he's waaaay more talented than me.-----//
-    // XzeroAir: I'm Not Really //
-
-    public static boolean movingForward(LivingEntity player, Direction facing) {
-        if (((facing.getDirectionVec().getX() * player.getMotion().x) > 0) || ((facing.getDirectionVec().getZ() * player.getMotion().y) > 0)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isHeadspaceFree(World world, BlockPos pos, int height) {
-        for (int y = 0; y < (height); y++) {
-            if (!isOpenBlockSpace(world, pos.add(0, y, 0))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static boolean isOpenBlockSpace(World world, BlockPos pos) {
-        final BlockState iblockstate = world.getBlockState(pos);
-
-        return !iblockstate.isNormalCube(world, pos);
-    }
-
     public static boolean canClimb(PlayerEntity player, Direction facing) {
         final World world = player.getEntityWorld();
         final BlockPos pos = new BlockPos(player.getPosX(), player.getPosY(), player.getPosZ());

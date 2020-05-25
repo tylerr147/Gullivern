@@ -19,7 +19,7 @@ public class Config {
             builder.push("General");
             MAX_SIZE = builder
                     .comment("Set the maximum player size")
-                    .defineInRange("MAX_SIZE", Float.MAX_VALUE, 1F, Float.MAX_VALUE);
+                    .defineInRange("MAX_SIZE", Float.MAX_VALUE, 1F, 50F);
             HEALTH_MULTIPLIER = builder
                     .comment("Set the health multiplier")
                     .defineInRange("HEALTH_MULTIPLIER", 1.0F, Float.MIN_VALUE, Float.MAX_VALUE);
