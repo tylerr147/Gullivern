@@ -239,6 +239,13 @@ public class GulliverReborn {
                 }
             }
         }
+
+        if (player.isBeingRidden() && player.isSneaking()) {
+            for (Entity entity : player.getPassengers()) {
+                entity.stopRiding();
+                entity.addVelocity(0, -1, 0);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -257,18 +264,6 @@ public class GulliverReborn {
 
             if (target.getHeight() * 2 <= player.getHeight() && Config.FEATURE.PICKUP_SMALL_ENTITIES.get()) {
                 target.startRiding(player);
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerEmptyClick(PlayerInteractEvent.RightClickEmpty event) {
-        PlayerEntity player = event.getPlayer();
-
-        if (player.getHeldItemMainhand().isEmpty() && player.isBeingRidden() && player.isSneaking()) {
-            for (Entity entity : player.getPassengers()) {
-                entity.stopRiding();
-                entity.addVelocity(0, -1, 0);
             }
         }
     }
