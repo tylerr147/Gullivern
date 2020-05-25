@@ -1,8 +1,7 @@
-package com.artemis.artemislib.util;
+package com.artemis.artemislib.attributes;
 
 import com.artemis.artemislib.compatibilities.sizeCap.ISizeCap;
 import com.artemis.artemislib.compatibilities.sizeCap.SizeCapPro;
-import com.artemis.artemislib.util.attributes.ArtemisLibAttributes;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
@@ -21,15 +20,15 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class AttachAttributes {
+public class AttributesHandler {
     @SubscribeEvent
     public void attachAttributes(EntityEvent.EntityConstructing event) {
         if (event.getEntity() instanceof LivingEntity) {
             final LivingEntity entity = (LivingEntity) event.getEntity();
             final AbstractAttributeMap map = entity.getAttributes();
 
-            map.registerAttribute(ArtemisLibAttributes.ENTITY_HEIGHT);
-            map.registerAttribute(ArtemisLibAttributes.ENTITY_WIDTH);
+            map.registerAttribute(Attributes.ENTITY_HEIGHT);
+            map.registerAttribute(Attributes.ENTITY_WIDTH);
         }
     }
 
@@ -38,11 +37,11 @@ public class AttachAttributes {
         final PlayerEntity player = event.player;
         LazyOptional<ISizeCap> lazyCap = player.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            final boolean hasHeightModifier = player.getAttributes().getAttributeInstance(ArtemisLibAttributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
-            final boolean hasWidthModifier = player.getAttributes().getAttributeInstance(ArtemisLibAttributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
+            final boolean hasHeightModifier = player.getAttributes().getAttributeInstance(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
+            final boolean hasWidthModifier = player.getAttributes().getAttributeInstance(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
 
-            final double heightAttribute = player.getAttributes().getAttributeInstance(ArtemisLibAttributes.ENTITY_HEIGHT).getValue();
-            final double widthAttribute = player.getAttributes().getAttributeInstance(ArtemisLibAttributes.ENTITY_WIDTH).getValue();
+            final double heightAttribute = player.getAttributes().getAttributeInstance(Attributes.ENTITY_HEIGHT).getValue();
+            final double widthAttribute = player.getAttributes().getAttributeInstance(Attributes.ENTITY_WIDTH).getValue();
             float height = (float) (cap.getDefaultHeight() * heightAttribute);
             float width = (float) (cap.getDefaultWidth() * widthAttribute);
 
@@ -106,10 +105,10 @@ public class AttachAttributes {
         if (!(entity instanceof PlayerEntity)) {
             LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
             lazyCap.ifPresent(cap -> {
-                final boolean hasHeightModifier = entity.getAttributes().getAttributeInstance(ArtemisLibAttributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
-                final boolean hasWidthModifier = entity.getAttributes().getAttributeInstance(ArtemisLibAttributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
-                final double heightAttribute = entity.getAttributes().getAttributeInstance(ArtemisLibAttributes.ENTITY_HEIGHT).getValue();
-                final double widthAttribute = entity.getAttributes().getAttributeInstance(ArtemisLibAttributes.ENTITY_WIDTH).getValue();
+                final boolean hasHeightModifier = entity.getAttributes().getAttributeInstance(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
+                final boolean hasWidthModifier = entity.getAttributes().getAttributeInstance(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
+                final double heightAttribute = entity.getAttributes().getAttributeInstance(Attributes.ENTITY_HEIGHT).getValue();
+                final double widthAttribute = entity.getAttributes().getAttributeInstance(Attributes.ENTITY_WIDTH).getValue();
                 float height = (float) (cap.getDefaultHeight() * heightAttribute);
                 float width = (float) (cap.getDefaultWidth() * widthAttribute);
 

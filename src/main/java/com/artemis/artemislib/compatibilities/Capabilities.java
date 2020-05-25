@@ -9,7 +9,6 @@ import com.artemis.artemislib.compatibilities.sizeCap.SizeDefaultCap;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 
 public class Capabilities {
-
 	public static void init()
 	{
 		CapabilityManager.INSTANCE.register(ISizeCap.class, new SizeCapStorage(), new CababilityFactory());

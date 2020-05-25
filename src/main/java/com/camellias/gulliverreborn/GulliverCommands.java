@@ -1,6 +1,6 @@
 package com.camellias.gulliverreborn;
 
-import com.artemis.artemislib.util.attributes.ArtemisLibAttributes;
+import com.artemis.artemislib.attributes.Attributes;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.brigadier.CommandDispatcher;
@@ -68,8 +68,8 @@ public class GulliverCommands {
         Multimap<String, AttributeModifier> removeableAttributes = HashMultimap.create();
         Multimap<String, AttributeModifier> removeableAttributes2 = HashMultimap.create();
 
-        attributes.put(ArtemisLibAttributes.ENTITY_HEIGHT.getName(), new AttributeModifier(uuidHeight, "Player Height", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        attributes.put(ArtemisLibAttributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, Config.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
+        attributes.put(Attributes.ENTITY_HEIGHT.getName(), new AttributeModifier(uuidHeight, "Player Height", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+        attributes.put(Attributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, Config.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (Config.FEATURE.SPEED_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.MOVEMENT_SPEED.getName(), new AttributeModifier(uuidSpeed, "Player Speed", (size - 1) / 2, AttributeModifier.Operation.MULTIPLY_TOTAL));
@@ -93,6 +93,9 @@ public class GulliverCommands {
         } else {
             sender.getAttributes().removeAttributeModifiers(removeableAttributes2);
         }
+
+        sender.getAttributes().applyAttributeModifiers(attributes);
+        sender.setHealth(sender.getMaxHealth());
 
         GulliverReborn.LOGGER.info(sender.getDisplayName().getFormattedText() + " set their size to " + size);
     }
