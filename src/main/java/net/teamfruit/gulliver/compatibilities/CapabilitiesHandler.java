@@ -3,7 +3,7 @@ package net.teamfruit.gulliver.compatibilities;
 import net.teamfruit.gulliver.compatibilities.sizeCap.ISizeCap;
 import net.teamfruit.gulliver.compatibilities.sizeCap.SizeCapPro;
 import net.teamfruit.gulliver.compatibilities.sizeCap.SizeDefaultCap;
-import net.teamfruit.gulliver.gulliverreborn.GulliverReborn;
+import net.teamfruit.gulliver.Gulliver;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +20,7 @@ public class CapabilitiesHandler {
             final float defaultWidth = entity.getWidth();
             final float defaultHeight = entity.getHeight();
             final ISizeCap cap = new SizeDefaultCap(transformed, defaultWidth, defaultHeight);
-            event.addCapability(new ResourceLocation(GulliverReborn.MODID, "capability"), new SizeCapPro(cap));
+            event.addCapability(new ResourceLocation(Gulliver.MODID, "capability"), new SizeCapPro(cap));
         }
     }
 }

@@ -1,4 +1,4 @@
-package net.teamfruit.gulliver.gulliverreborn;
+package net.teamfruit.gulliver;
 
 import net.teamfruit.gulliver.attributes.Attributes;
 import com.google.common.collect.HashMultimap;
@@ -47,14 +47,14 @@ public class GulliverCommands {
                         .then(
                                 RequiredArgumentBuilder.<CommandSource, Float>argument("size", FloatArgumentType.floatArg(0.125F))
                                         .requires(cs -> {
-                                            if (!Config.GENERAL.REQUIRE_PERMISSION.get())
+                                            if (!GulliverConfig.GENERAL.REQUIRE_PERMISSION.get())
                                                 return true;
                                             if (cs.hasPermissionLevel(2))
                                                 return true;
                                             if (cs.getEntity() instanceof ServerPlayerEntity) {
                                                 try {
                                                     String playerUUID = cs.asPlayer().getGameProfile().getId().toString();
-                                                    if (Config.GENERAL.WHITELIST.get().contains(playerUUID))
+                                                    if (GulliverConfig.GENERAL.WHITELIST.get().contains(playerUUID))
                                                         return true;
                                                 } catch (CommandSyntaxException e) {
                                                 }
@@ -64,7 +64,7 @@ public class GulliverCommands {
                                         .executes(ctx -> {
                                             PlayerEntity sender = ctx.getSource().asPlayer();
                                             float size = FloatArgumentType.getFloat(ctx, "size");
-                                            float maxUserSize = Config.GENERAL.MAX_SIZE_USER.get().floatValue();
+                                            float maxUserSize = GulliverConfig.GENERAL.MAX_SIZE_USER.get().floatValue();
                                             if (!ctx.getSource().hasPermissionLevel(2) && size > maxUserSize) {
                                                 Message message = new StringTextComponent("Need permission for size over " + maxUserSize);
                                                 throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
@@ -114,7 +114,7 @@ public class GulliverCommands {
                         )
         );
         dispatcher.register(
-                LiteralArgumentBuilder.<CommandSource>literal(GulliverReborn.MODID)
+                LiteralArgumentBuilder.<CommandSource>literal(Gulliver.MODID)
                         .then(
                                 LiteralArgumentBuilder.<CommandSource>literal("size")
                                         .redirect(node)
@@ -125,8 +125,8 @@ public class GulliverCommands {
                                         .then(
                                                 LiteralArgumentBuilder.<CommandSource>literal("on")
                                                         .executes(ctx -> {
-                                                            Config.GENERAL.REQUIRE_PERMISSION.set(true);
-                                                            Config.GENERAL.REQUIRE_PERMISSION.save();
+                                                            GulliverConfig.GENERAL.REQUIRE_PERMISSION.set(true);
+                                                            GulliverConfig.GENERAL.REQUIRE_PERMISSION.save();
                                                             ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.enabled"), true);
                                                             return 1;
                                                         })
@@ -134,8 +134,8 @@ public class GulliverCommands {
                                         .then(
                                                 LiteralArgumentBuilder.<CommandSource>literal("off")
                                                         .executes(ctx -> {
-                                                            Config.GENERAL.REQUIRE_PERMISSION.set(false);
-                                                            Config.GENERAL.REQUIRE_PERMISSION.save();
+                                                            GulliverConfig.GENERAL.REQUIRE_PERMISSION.set(false);
+                                                            GulliverConfig.GENERAL.REQUIRE_PERMISSION.save();
                                                             ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.disabled"), true);
                                                             return 1;
                                                         })
@@ -143,7 +143,7 @@ public class GulliverCommands {
                                         .then(
                                                 LiteralArgumentBuilder.<CommandSource>literal("list")
                                                         .executes(ctx -> {
-                                                            List<String> whitelist = Config.GENERAL.WHITELIST.get();
+                                                            List<String> whitelist = GulliverConfig.GENERAL.WHITELIST.get();
                                                             PlayerList playerList = ctx.getSource().getServer().getPlayerList();
                                                             List<ITextComponent> list = whitelist.stream().map(uuid -> {
                                                                 try {
@@ -167,7 +167,7 @@ public class GulliverCommands {
                                                                 RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("players", EntityArgument.players())
                                                                         .executes(ctx -> {
                                                                             Collection<ServerPlayerEntity> players = EntityArgument.getPlayers(ctx, "players");
-                                                                            List<String> whitelist = Config.GENERAL.WHITELIST.get();
+                                                                            List<String> whitelist = GulliverConfig.GENERAL.WHITELIST.get();
                                                                             for (ServerPlayerEntity player : players) {
                                                                                 String uuid = player.getGameProfile().getId().toString();
                                                                                 if (!whitelist.contains(uuid)) {
@@ -175,8 +175,8 @@ public class GulliverCommands {
                                                                                     ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.add.success", TextComponentUtils.getDisplayName(player.getGameProfile())), true);
                                                                                 }
                                                                             }
-                                                                            Config.GENERAL.WHITELIST.set(whitelist);
-                                                                            Config.GENERAL.WHITELIST.save();
+                                                                            GulliverConfig.GENERAL.WHITELIST.set(whitelist);
+                                                                            GulliverConfig.GENERAL.WHITELIST.save();
                                                                             return 1;
                                                                         })
                                                         )
@@ -187,7 +187,7 @@ public class GulliverCommands {
                                                                 RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("players", EntityArgument.players())
                                                                         .executes(ctx -> {
                                                                             Collection<ServerPlayerEntity> players = EntityArgument.getPlayers(ctx, "players");
-                                                                            List<String> whitelist = Config.GENERAL.WHITELIST.get();
+                                                                            List<String> whitelist = GulliverConfig.GENERAL.WHITELIST.get();
                                                                             for (ServerPlayerEntity player : players) {
                                                                                 String uuid = player.getGameProfile().getId().toString();
                                                                                 if (whitelist.contains(uuid)) {
@@ -195,8 +195,8 @@ public class GulliverCommands {
                                                                                     ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.remove.success", TextComponentUtils.getDisplayName(player.getGameProfile())), true);
                                                                                 }
                                                                             }
-                                                                            Config.GENERAL.WHITELIST.set(whitelist);
-                                                                            Config.GENERAL.WHITELIST.save();
+                                                                            GulliverConfig.GENERAL.WHITELIST.set(whitelist);
+                                                                            GulliverConfig.GENERAL.WHITELIST.save();
                                                                             return 1;
                                                                         })
                                                         )
@@ -211,18 +211,18 @@ public class GulliverCommands {
         Multimap<String, AttributeModifier> removeableAttributes2 = HashMultimap.create();
 
         attributes.put(Attributes.ENTITY_HEIGHT.getName(), new AttributeModifier(uuidHeight, "Player Height", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        attributes.put(Attributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, Config.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
+        attributes.put(Attributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, GulliverConfig.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-        if (Config.MODIFIER.SPEED_MODIFIER.get())
+        if (GulliverConfig.MODIFIER.SPEED_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.MOVEMENT_SPEED.getName(), new AttributeModifier(uuidSpeed, "Player Speed", (size - 1) / 2, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.MODIFIER.REACH_MODIFIER.get())
+        if (GulliverConfig.MODIFIER.REACH_MODIFIER.get())
             removeableAttributes.put(PlayerEntity.REACH_DISTANCE.getName(), new AttributeModifier(uuidReach1, "Player Reach 1", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.MODIFIER.REACH_MODIFIER.get())
+        if (GulliverConfig.MODIFIER.REACH_MODIFIER.get())
             removeableAttributes2.put(PlayerEntity.REACH_DISTANCE.getName(), new AttributeModifier(uuidReach2, "Player Reach 2", -MathHelper.clamp(size - 1, 0.33, Double.MAX_VALUE), AttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (Config.MODIFIER.STRENGTH_MODIFIER.get())
+        if (GulliverConfig.MODIFIER.STRENGTH_MODIFIER.get())
             attributes.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(uuidStrength, "Player Strength", size - 1, AttributeModifier.Operation.ADDITION));
-        if (Config.MODIFIER.HEALTH_MODIFIER.get())
-            attributes.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(uuidHealth, "Player Health", (size - 1) * Config.GENERAL.HEALTH_MULTIPLIER.get(), AttributeModifier.Operation.MULTIPLY_TOTAL));
+        if (GulliverConfig.MODIFIER.HEALTH_MODIFIER.get())
+            attributes.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(uuidHealth, "Player Health", (size - 1) * GulliverConfig.GENERAL.HEALTH_MULTIPLIER.get(), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (size > 1) {
             sender.getAttributes().applyAttributeModifiers(removeableAttributes);

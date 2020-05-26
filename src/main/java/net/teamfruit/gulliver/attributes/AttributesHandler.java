@@ -35,11 +35,11 @@ public class AttributesHandler {
         final PlayerEntity player = event.player;
         LazyOptional<ISizeCap> lazyCap = player.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            final boolean hasHeightModifier = player.getAttributes().getAttributeInstance(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
-            final boolean hasWidthModifier = player.getAttributes().getAttributeInstance(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
+            final boolean hasHeightModifier = player.getAttribute(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
+            final boolean hasWidthModifier = player.getAttribute(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
 
-            final double heightAttribute = player.getAttributes().getAttributeInstance(Attributes.ENTITY_HEIGHT).getValue();
-            final double widthAttribute = player.getAttributes().getAttributeInstance(Attributes.ENTITY_WIDTH).getValue();
+            final double heightAttribute = player.getAttribute(Attributes.ENTITY_HEIGHT).getValue();
+            final double widthAttribute = player.getAttribute(Attributes.ENTITY_WIDTH).getValue();
             float height = (float) (cap.getDefaultHeight() * heightAttribute);
             float width = (float) (cap.getDefaultWidth() * widthAttribute);
 
@@ -103,10 +103,10 @@ public class AttributesHandler {
         if (!(entity instanceof PlayerEntity)) {
             LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
             lazyCap.ifPresent(cap -> {
-                final boolean hasHeightModifier = entity.getAttributes().getAttributeInstance(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
-                final boolean hasWidthModifier = entity.getAttributes().getAttributeInstance(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
-                final double heightAttribute = entity.getAttributes().getAttributeInstance(Attributes.ENTITY_HEIGHT).getValue();
-                final double widthAttribute = entity.getAttributes().getAttributeInstance(Attributes.ENTITY_WIDTH).getValue();
+                final boolean hasHeightModifier = entity.getAttribute(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
+                final boolean hasWidthModifier = entity.getAttribute(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
+                final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT).getValue();
+                final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH).getValue();
                 float height = (float) (cap.getDefaultHeight() * heightAttribute);
                 float width = (float) (cap.getDefaultWidth() * widthAttribute);
 

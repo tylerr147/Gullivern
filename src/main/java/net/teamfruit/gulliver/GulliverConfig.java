@@ -1,11 +1,11 @@
-package net.teamfruit.gulliver.gulliverreborn;
+package net.teamfruit.gulliver;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Config {
+public class GulliverConfig {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     public static final General GENERAL = new General(BUILDER);

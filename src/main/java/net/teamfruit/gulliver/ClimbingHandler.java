@@ -1,4 +1,4 @@
-package net.teamfruit.gulliver.gulliverreborn;
+package net.teamfruit.gulliver;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PaneBlock;
