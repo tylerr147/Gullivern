@@ -1,4 +1,4 @@
-package com.camellias.gulliverreborn;
+package net.teamfruit.gulliver.gulliverreborn;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 

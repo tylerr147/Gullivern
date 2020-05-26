@@ -1,10 +1,10 @@
-package com.camellias.gulliverreborn;
+package net.teamfruit.gulliver.gulliverreborn;
 
-import com.artemis.artemislib.attributes.AttributesHandler;
-import com.artemis.artemislib.compatibilities.Capabilities;
-import com.artemis.artemislib.compatibilities.CapabilitiesHandler;
-import com.artemis.artemislib.compatibilities.sizeCap.ISizeCap;
-import com.artemis.artemislib.compatibilities.sizeCap.SizeCapPro;
+import net.teamfruit.gulliver.attributes.AttributesHandler;
+import net.teamfruit.gulliver.compatibilities.Capabilities;
+import net.teamfruit.gulliver.compatibilities.CapabilitiesHandler;
+import net.teamfruit.gulliver.compatibilities.sizeCap.ISizeCap;
+import net.teamfruit.gulliver.compatibilities.sizeCap.SizeCapPro;
 import net.minecraft.block.*;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;

@@ -1,9 +1,9 @@
-package com.artemis.artemislib.compatibilities;
+package net.teamfruit.gulliver.compatibilities;
 
-import com.artemis.artemislib.compatibilities.sizeCap.ISizeCap;
-import com.artemis.artemislib.compatibilities.sizeCap.SizeCapPro;
-import com.artemis.artemislib.compatibilities.sizeCap.SizeDefaultCap;
-import com.camellias.gulliverreborn.GulliverReborn;
+import net.teamfruit.gulliver.compatibilities.sizeCap.ISizeCap;
+import net.teamfruit.gulliver.compatibilities.sizeCap.SizeCapPro;
+import net.teamfruit.gulliver.compatibilities.sizeCap.SizeDefaultCap;
+import net.teamfruit.gulliver.gulliverreborn.GulliverReborn;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;

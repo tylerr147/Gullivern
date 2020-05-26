@@ -1,8 +1,7 @@
-package com.artemis.artemislib.attributes;
+package net.teamfruit.gulliver.attributes;
 
-import com.artemis.artemislib.compatibilities.sizeCap.ISizeCap;
-import com.artemis.artemislib.compatibilities.sizeCap.SizeCapPro;
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.teamfruit.gulliver.compatibilities.sizeCap.ISizeCap;
+import net.teamfruit.gulliver.compatibilities.sizeCap.SizeCapPro;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -10,7 +9,6 @@ import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderLivingEvent;

@@ -1,6 +1,6 @@
-package com.camellias.gulliverreborn;
+package net.teamfruit.gulliver.gulliverreborn;
 
-import com.artemis.artemislib.attributes.Attributes;
+import net.teamfruit.gulliver.attributes.Attributes;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.brigadier.CommandDispatcher;
@@ -8,7 +8,6 @@ import com.mojang.brigadier.Message;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.exceptions.CommandExceptionType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;

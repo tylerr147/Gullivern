@@ -1,4 +1,4 @@
-package com.artemis.artemislib.compatibilities.sizeCap;
+package net.teamfruit.gulliver.compatibilities.sizeCap;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;

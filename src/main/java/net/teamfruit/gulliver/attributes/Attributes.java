@@ -1,6 +1,6 @@
-package com.artemis.artemislib.attributes;
+package net.teamfruit.gulliver.attributes;
 
-import com.camellias.gulliverreborn.GulliverReborn;
+import net.teamfruit.gulliver.gulliverreborn.GulliverReborn;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 
