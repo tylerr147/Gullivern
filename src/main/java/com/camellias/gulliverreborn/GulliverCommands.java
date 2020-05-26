@@ -7,6 +7,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.EntityArgument;
@@ -16,6 +17,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.*;
 
@@ -40,6 +42,21 @@ public class GulliverCommands {
                         .requires(cs -> cs.hasPermissionLevel(0))
                         .then(
                                 RequiredArgumentBuilder.<CommandSource, Float>argument("size", FloatArgumentType.floatArg(0.125F))
+                                        .requires(cs -> {
+                                            if (!Config.GENERAL.REQUIRE_PERMISSION.get())
+                                                return true;
+                                            if (cs.hasPermissionLevel(2))
+                                                return true;
+                                            if (cs.getEntity() instanceof ServerPlayerEntity) {
+                                                try {
+                                                    String playerUUID = cs.asPlayer().getGameProfile().getId().toString();
+                                                    if (Config.GENERAL.WHITELIST.get().contains(playerUUID))
+                                                        return true;
+                                                } catch (CommandSyntaxException e) {
+                                                }
+                                            }
+                                            return false;
+                                        })
                                         .executes(ctx -> {
                                             PlayerEntity sender = ctx.getSource().asPlayer();
                                             float size = FloatArgumentType.getFloat(ctx, "size");
@@ -87,7 +104,65 @@ public class GulliverCommands {
                                         )
                         )
         );
-        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal(GulliverReborn.MODID).redirect(node));
+        dispatcher.register(
+                LiteralArgumentBuilder.<CommandSource>literal(GulliverReborn.MODID)
+                        .then(
+                                LiteralArgumentBuilder.<CommandSource>literal("size")
+                                        .redirect(node)
+                        )
+                        .then(
+                                LiteralArgumentBuilder.<CommandSource>literal("whitelist")
+                                        .requires(cs -> cs.hasPermissionLevel(3))
+                                        .then(
+                                                LiteralArgumentBuilder.<CommandSource>literal("on")
+                                                        .executes(ctx -> {
+                                                            Config.GENERAL.REQUIRE_PERMISSION.set(true);
+                                                            Config.GENERAL.REQUIRE_PERMISSION.save();
+                                                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.enabled"), true);
+                                                            return 1;
+                                                        })
+                                        )
+                                        .then(
+                                                LiteralArgumentBuilder.<CommandSource>literal("off")
+                                                        .executes(ctx -> {
+                                                            Config.GENERAL.REQUIRE_PERMISSION.set(false);
+                                                            Config.GENERAL.REQUIRE_PERMISSION.save();
+                                                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.disabled"), true);
+                                                            return 1;
+                                                        })
+                                        )
+                                        .then(
+                                                LiteralArgumentBuilder.<CommandSource>literal("add")
+                                                        .then(
+                                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("player", EntityArgument.player())
+                                                                        .executes(ctx -> {
+                                                                            PlayerEntity player = EntityArgument.getPlayer(ctx, "player");
+                                                                            List<String> whitelist = Config.GENERAL.WHITELIST.get();
+                                                                            whitelist.add(player.getGameProfile().getId().toString());
+                                                                            Config.GENERAL.WHITELIST.set(whitelist);
+                                                                            Config.GENERAL.WHITELIST.save();
+                                                                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.add.success", TextComponentUtils.getDisplayName(player.getGameProfile())), true);
+                                                                            return 1;
+                                                                        })
+                                                        )
+                                        )
+                                        .then(
+                                                LiteralArgumentBuilder.<CommandSource>literal("remove")
+                                                        .then(
+                                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("player", EntityArgument.player())
+                                                                        .executes(ctx -> {
+                                                                            PlayerEntity player = EntityArgument.getPlayer(ctx, "player");
+                                                                            List<String> whitelist = Config.GENERAL.WHITELIST.get();
+                                                                            whitelist.remove(player.getGameProfile().getId().toString());
+                                                                            Config.GENERAL.WHITELIST.set(whitelist);
+                                                                            Config.GENERAL.WHITELIST.save();
+                                                                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.remove.success", TextComponentUtils.getDisplayName(player.getGameProfile())), true);
+                                                                            return 1;
+                                                                        })
+                                                        )
+                                        )
+                        )
+        );
     }
 
     public void changeSize(LivingEntity sender, float size) {

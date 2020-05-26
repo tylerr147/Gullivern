@@ -2,6 +2,9 @@ package com.camellias.gulliverreborn;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Config {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
@@ -14,6 +17,8 @@ public class Config {
     public static class General {
         public final ForgeConfigSpec.ConfigValue<Double> MAX_SIZE;
         public final ForgeConfigSpec.ConfigValue<Double> HEALTH_MULTIPLIER;
+        public final ForgeConfigSpec.ConfigValue<Boolean> REQUIRE_PERMISSION;
+        public final ForgeConfigSpec.ConfigValue<List<String>> WHITELIST;
 
         public General(ForgeConfigSpec.Builder builder) {
             builder.push("General");
@@ -23,6 +28,12 @@ public class Config {
             HEALTH_MULTIPLIER = builder
                     .comment("Set the health multiplier")
                     .defineInRange("HEALTH_MULTIPLIER", 1.0F, Float.MIN_VALUE, Float.MAX_VALUE);
+            REQUIRE_PERMISSION = builder
+                    .comment("Set true to require permission for own size changing")
+                    .define("REQUIRE_PERMISSION", false);
+            WHITELIST = builder
+                    .comment("UUID of members can ignore permission for own size changing")
+                    .define("WHITELIST", new ArrayList<>());
             builder.pop();
         }
     }

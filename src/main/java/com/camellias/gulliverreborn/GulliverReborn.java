@@ -1,9 +1,10 @@
 package com.camellias.gulliverreborn;
 
+import com.artemis.artemislib.attributes.AttributesHandler;
+import com.artemis.artemislib.compatibilities.Capabilities;
+import com.artemis.artemislib.compatibilities.CapabilitiesHandler;
 import com.artemis.artemislib.compatibilities.sizeCap.ISizeCap;
 import com.artemis.artemislib.compatibilities.sizeCap.SizeCapPro;
-import com.artemis.artemislib.proxy.ClientProxy;
-import com.artemis.artemislib.proxy.CommonProxy;
 import net.minecraft.block.*;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -12,7 +13,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.monster.SpiderEntity;
 import net.minecraft.entity.passive.OcelotEntity;
-import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -40,10 +40,8 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -59,11 +57,11 @@ public class GulliverReborn {
     public static final String NAME = "Gulliver-1.15.2";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
-    public static CommonProxy proxy = DistExecutor.<CommonProxy>runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
-
     public GulliverReborn() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
         MinecraftForge.EVENT_BUS.register(this);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigEvent);
     }
 
     public static DamageSource causeCrushingDamage(LivingEntity entity) {
@@ -71,8 +69,13 @@ public class GulliverReborn {
     }
 
     public void preInit(FMLCommonSetupEvent event) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-        proxy.preInit(event);
+        Capabilities.init();
+        MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
+        MinecraftForge.EVENT_BUS.register(new AttributesHandler());
+    }
+
+    public void onConfigEvent(ModConfig.Loading event) {
+        // Config.SPEC.setConfig(event.getConfig().getConfigData());
     }
 
     @SubscribeEvent
