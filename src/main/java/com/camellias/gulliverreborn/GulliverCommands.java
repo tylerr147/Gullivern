@@ -18,6 +18,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.*;
 
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class GulliverCommands {
@@ -132,16 +134,42 @@ public class GulliverCommands {
                                                         })
                                         )
                                         .then(
+                                                LiteralArgumentBuilder.<CommandSource>literal("list")
+                                                        .executes(ctx -> {
+                                                            List<String> whitelist = Config.GENERAL.WHITELIST.get();
+                                                            PlayerList playerList = ctx.getSource().getServer().getPlayerList();
+                                                            List<ITextComponent> list = whitelist.stream().map(uuid -> {
+                                                                try {
+                                                                    return playerList.getPlayerByUUID(UUID.fromString(uuid)).getDisplayName();
+                                                                } catch (IllegalArgumentException e) {
+                                                                    return new StringTextComponent(uuid);
+                                                                }
+                                                            }).collect(Collectors.toList());
+                                                            if (list.isEmpty())
+                                                                ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.none"), false);
+                                                            else {
+                                                                ITextComponent text = TextComponentUtils.makeList(list, Function.identity());
+                                                                ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.list", list.size(), text), false);
+                                                            }
+                                                            return 1;
+                                                        })
+                                        )
+                                        .then(
                                                 LiteralArgumentBuilder.<CommandSource>literal("add")
                                                         .then(
-                                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("player", EntityArgument.player())
+                                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("players", EntityArgument.players())
                                                                         .executes(ctx -> {
-                                                                            PlayerEntity player = EntityArgument.getPlayer(ctx, "player");
+                                                                            Collection<ServerPlayerEntity> players = EntityArgument.getPlayers(ctx, "players");
                                                                             List<String> whitelist = Config.GENERAL.WHITELIST.get();
-                                                                            whitelist.add(player.getGameProfile().getId().toString());
+                                                                            for (ServerPlayerEntity player : players) {
+                                                                                String uuid = player.getGameProfile().getId().toString();
+                                                                                if (!whitelist.contains(uuid)) {
+                                                                                    whitelist.add(uuid);
+                                                                                    ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.add.success", TextComponentUtils.getDisplayName(player.getGameProfile())), true);
+                                                                                }
+                                                                            }
                                                                             Config.GENERAL.WHITELIST.set(whitelist);
                                                                             Config.GENERAL.WHITELIST.save();
-                                                                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.add.success", TextComponentUtils.getDisplayName(player.getGameProfile())), true);
                                                                             return 1;
                                                                         })
                                                         )
@@ -149,14 +177,19 @@ public class GulliverCommands {
                                         .then(
                                                 LiteralArgumentBuilder.<CommandSource>literal("remove")
                                                         .then(
-                                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("player", EntityArgument.player())
+                                                                RequiredArgumentBuilder.<CommandSource, EntitySelector>argument("players", EntityArgument.players())
                                                                         .executes(ctx -> {
-                                                                            PlayerEntity player = EntityArgument.getPlayer(ctx, "player");
+                                                                            Collection<ServerPlayerEntity> players = EntityArgument.getPlayers(ctx, "players");
                                                                             List<String> whitelist = Config.GENERAL.WHITELIST.get();
-                                                                            whitelist.remove(player.getGameProfile().getId().toString());
+                                                                            for (ServerPlayerEntity player : players) {
+                                                                                String uuid = player.getGameProfile().getId().toString();
+                                                                                if (whitelist.contains(uuid)) {
+                                                                                    whitelist.remove(uuid);
+                                                                                    ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.remove.success", TextComponentUtils.getDisplayName(player.getGameProfile())), true);
+                                                                                }
+                                                                            }
                                                                             Config.GENERAL.WHITELIST.set(whitelist);
                                                                             Config.GENERAL.WHITELIST.save();
-                                                                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.remove.success", TextComponentUtils.getDisplayName(player.getGameProfile())), true);
                                                                             return 1;
                                                                         })
                                                         )
