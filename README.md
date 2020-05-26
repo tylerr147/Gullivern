@@ -1,7 +1,7 @@
 [![Latest Tag](https://img.shields.io/github/tag/Kamesuta/Gulliver-1.15.2.svg?label=Latest%20Tag&style=flat)](https://github.com/Kamesuta/Gulliver-1.15.2/tags)
 [![Latest Release](https://img.shields.io/github/release/Kamesuta/Gulliver-1.15.2.svg?label=Latest%20Release&style=flat)](https://github.com/Kamesuta/Gulliver-1.15.2/releases)
 
-# Emojicord
+# Gulliver-1.15.2
 ![Minecraft 1.15.2](https://img.shields.io/badge/Minecraft-1.15.2-green.svg?style=flat)
 
 ## Table of Contents
