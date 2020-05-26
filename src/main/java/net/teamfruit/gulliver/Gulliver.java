@@ -139,7 +139,7 @@ public class Gulliver {
         World world = event.player.world;
 
         player.stepHeight = player.getHeight() / 3F;
-        player.jumpMovementFactor *= (float) Math.pow(player.getHeight(), .4f);
+        player.jumpMovementFactor *= (float) Math.pow(player.getHeight() / 1.8f, .4f);
 
         if (player.getHeight() > 2.0F && player instanceof ServerPlayerEntity) {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
@@ -292,7 +292,7 @@ public class Gulliver {
     public void onEntityJump(LivingJumpEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity && GulliverConfig.MODIFIER.JUMP_MODIFIER.get()) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-            float jumpHeight = (float) Math.pow(player.getHeight(), .5f);
+            float jumpHeight = (float) Math.pow(player.getHeight() / 1.8f, .6f);
 
             jumpHeight = MathHelper.clamp(jumpHeight, 0.65F, jumpHeight);
             player.setMotion(player.getMotion().mul(1, jumpHeight, 1));
