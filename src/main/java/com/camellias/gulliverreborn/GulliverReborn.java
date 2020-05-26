@@ -14,6 +14,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.monster.SpiderEntity;
 import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -48,6 +49,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.teamfruit.gulliver.event.PlayNetMoveEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -123,12 +125,27 @@ public class GulliverReborn {
     }
 
     @SubscribeEvent
+    public void onPlayNetMove(PlayNetMoveEvent event) {
+        ServerPlayerEntity serverPlayer = event.getPlayer();
+
+        if (serverPlayer.getHeight() > 2.0F) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         PlayerEntity player = event.player;
         World world = event.player.world;
 
         player.stepHeight = player.getHeight() / 3F;
-        player.jumpMovementFactor *= (player.getHeight() / 1.8F);
+        player.jumpMovementFactor *= (float) Math.pow(player.getHeight(), .4f);
+
+        if (player.getHeight() > 2.0F && player instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
+            if (serverPlayer.connection != null)
+                serverPlayer.connection.floating = false;
+        }
 
         if (player.getHeight() < 0.9F) {
             BlockPos pos = new BlockPos(player.getPosX(), player.getPosY(), player.getPosZ());
@@ -275,7 +292,7 @@ public class GulliverReborn {
     public void onEntityJump(LivingJumpEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity && Config.MODIFIER.JUMP_MODIFIER.get()) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-            float jumpHeight = (player.getHeight() / 1.8F);
+            float jumpHeight = (float) Math.pow(player.getHeight(), .5f);
 
             jumpHeight = MathHelper.clamp(jumpHeight, 0.65F, jumpHeight);
             player.setMotion(player.getMotion().mul(1, jumpHeight, 1));
