@@ -16,6 +16,7 @@ public class Config {
 
     public static class General {
         public final ForgeConfigSpec.ConfigValue<Double> MAX_SIZE;
+        public final ForgeConfigSpec.ConfigValue<Double> MAX_SIZE_USER;
         public final ForgeConfigSpec.ConfigValue<Double> HEALTH_MULTIPLIER;
         public final ForgeConfigSpec.ConfigValue<Boolean> REQUIRE_PERMISSION;
         public final ForgeConfigSpec.ConfigValue<List<String>> WHITELIST;
@@ -24,7 +25,10 @@ public class Config {
             builder.push("General");
             MAX_SIZE = builder
                     .comment("Set the maximum player size")
-                    .defineInRange("MAX_SIZE", Float.MAX_VALUE, 1F, 50F);
+                    .defineInRange("MAX_SIZE", Float.MAX_VALUE, 1F, 100F);
+            MAX_SIZE_USER = builder
+                    .comment("Set the maximum player size (non-op)")
+                    .defineInRange("MAX_SIZE_USER", Float.MAX_VALUE, 1F, 20F);
             HEALTH_MULTIPLIER = builder
                     .comment("Set the health multiplier")
                     .defineInRange("HEALTH_MULTIPLIER", 1.0F, Float.MIN_VALUE, Float.MAX_VALUE);

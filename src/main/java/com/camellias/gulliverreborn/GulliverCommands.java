@@ -4,10 +4,13 @@ import com.artemis.artemislib.attributes.Attributes;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.Message;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandExceptionType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.EntityArgument;
@@ -62,6 +65,11 @@ public class GulliverCommands {
                                         .executes(ctx -> {
                                             PlayerEntity sender = ctx.getSource().asPlayer();
                                             float size = FloatArgumentType.getFloat(ctx, "size");
+                                            float maxUserSize = Config.GENERAL.MAX_SIZE_USER.get().floatValue();
+                                            if (!ctx.getSource().hasPermissionLevel(2) && size > maxUserSize) {
+                                                Message message = new StringTextComponent("Need permission for size over " + maxUserSize);
+                                                throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
+                                            }
                                             changeSize(sender, size);
                                             ctx.getSource().sendFeedback(
                                                     sender.getDisplayName()
