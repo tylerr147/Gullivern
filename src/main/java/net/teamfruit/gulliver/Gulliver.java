@@ -1,12 +1,6 @@
 package net.teamfruit.gulliver;
 
-import net.teamfruit.gulliver.attributes.AttributesHandler;
-import net.teamfruit.gulliver.compatibilities.Capabilities;
-import net.teamfruit.gulliver.compatibilities.CapabilitiesHandler;
-import net.teamfruit.gulliver.compatibilities.sizeCap.ISizeCap;
-import net.teamfruit.gulliver.compatibilities.sizeCap.SizeCapPro;
 import net.minecraft.block.*;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -19,8 +13,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.pathfinding.PathType;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EntityDamageSource;
@@ -30,7 +22,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -49,6 +40,11 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.teamfruit.gulliver.attributes.AttributesHandler;
+import net.teamfruit.gulliver.compatibilities.Capabilities;
+import net.teamfruit.gulliver.compatibilities.CapabilitiesHandler;
+import net.teamfruit.gulliver.compatibilities.sizeCap.ISizeCap;
+import net.teamfruit.gulliver.compatibilities.sizeCap.SizeCapPro;
 import net.teamfruit.gulliver.event.PlayNetMoveEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -314,6 +310,7 @@ public class Gulliver {
             event.setNewSpeed(event.getOriginalSpeed() * (player.getHeight() / 1.8F));
     }
 
+    /*
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onFOVChange(FOVUpdateEvent event) {
@@ -330,6 +327,7 @@ public class Gulliver {
             }
         }
     }
+     */
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
