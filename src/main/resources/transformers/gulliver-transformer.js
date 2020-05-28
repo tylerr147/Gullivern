@@ -86,6 +86,39 @@ VisitorHelper.insnToList = function(insn) {
     return list;
 }
 
+function sizeHookTransform(name) {
+    return function(method) {
+        /*
+            public EntitySize getSize(Pose poseIn) {
+                return GulliverHooks.fireEntityGetSizeEvent(this.type.getSize(), this, poseIn);
+            }
+         */
+        /*
+           L0
+            LINENUMBER 3091 L0
+            ALOAD 0
+            GETFIELD net/minecraft/entity/Entity.type : Lnet/minecraft/entity/EntityType;
+            INVOKEVIRTUAL net/minecraft/entity/EntityType.getSize ()Lnet/minecraft/entity/EntitySize;
+            ALOAD 0
+            ALOAD 1
+            INVOKESTATIC net/teamfruit/gulliver/event/GulliverHooks.fireEntityGetSizeEvent (Lnet/minecraft/entity/EntitySize;Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Pose;)Lnet/minecraft/entity/EntitySize;
+            ARETURN
+           L1
+            LOCALVARIABLE this Lnet/minecraft/entity/Entity; L0 L1 0
+            LOCALVARIABLE poseIn Lnet/minecraft/entity/Pose; L0 L1 1
+            MAXSTACK = 3
+            MAXLOCALS = 2
+         */
+        var marker = ASMAPI.findFirstInstruction(method, Opcodes.ARETURN);
+        var insertion = new InsnList();
+        insertion.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        insertion.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        insertion.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ClassName.of("net.teamfruit.gulliver.event.GulliverHooks").getBytecodeName(), name, DescHelper.toDescMethod(ClassName.of("net.minecraft.entity.EntitySize"), ClassName.of("net.minecraft.entity.EntitySize"), ClassName.of("net.minecraft.entity.Entity"), ClassName.of("net.minecraft.entity.Pose")), false));
+        method.instructions.insertBefore(marker, insertion);
+        return method;
+    };
+}
+
 function initializeCoreMod() {
     return {
         'PlayNetTransform': {
@@ -125,6 +158,24 @@ function initializeCoreMod() {
                 });
                 return method;
             }
+        },
+        'EntityTransform': {
+            'target': {
+                'type': 'METHOD',
+                'class': 'net.minecraft.entity.Entity',
+                'methodName': 'func_213305_a',
+                'methodDesc': DescHelper.toDescMethod(ClassName.of("net.minecraft.entity.EntitySize"), ClassName.of("net.minecraft.entity.Pose"))
+            },
+            'transformer': sizeHookTransform("fireEntityGetSizeEvent")
+        },
+        'PlayerTransform': {
+            'target': {
+                'type': 'METHOD',
+                'class': 'net.minecraft.entity.player.PlayerEntity',
+                'methodName': 'func_213305_a',
+                'methodDesc': DescHelper.toDescMethod(ClassName.of("net.minecraft.entity.EntitySize"), ClassName.of("net.minecraft.entity.Pose"))
+            },
+            'transformer': sizeHookTransform("firePlayerGetSizeEvent")
         }
     };
 }

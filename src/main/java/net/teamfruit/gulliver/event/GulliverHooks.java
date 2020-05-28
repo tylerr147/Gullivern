@@ -12,5 +12,17 @@ public class GulliverHooks {
         PlayNetMoveEvent event = new PlayNetMoveEvent(handler, player);
         boolean canceled = MinecraftForge.EVENT_BUS.post(event);
         return isInvulnerableDimensionChange || canceled;
-    } 
+    }
+
+    public static EntitySize fireEntityGetSizeEvent(EntitySize size, Entity entity, Pose pose) {
+        EntitySizeEvent event = new EntitySizeEvent(entity, pose, size);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getNewSize();
+    }
+
+    public static EntitySize firePlayerGetSizeEvent(EntitySize size, Entity entity, Pose pose) {
+        EntitySizeEvent event = new EntitySizeEvent(entity, pose, size);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getNewSize();
+    }
 }
