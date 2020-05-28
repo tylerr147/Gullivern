@@ -226,6 +226,12 @@ public class Gulliver {
                         player.jumpMovementFactor = 0.02F * 1.75F;
                         player.fallDistance = 0;
 
+                        if (player instanceof ServerPlayerEntity) {
+                            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
+                            if (serverPlayer.connection != null)
+                                serverPlayer.connection.floating = false;
+                        }
+
                         Vec3d motion = player.getMotion();
                         if (motion.getY() < 0D) {
                             player.setMotion(motion.mul(1, 0.6D, 1));

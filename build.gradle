@@ -14,7 +14,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 group = 'net.teamfruit.gulliver' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'gulliver'
+archivesBaseName = 'gullivern'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
