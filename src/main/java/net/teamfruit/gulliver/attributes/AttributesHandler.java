@@ -133,16 +133,21 @@ public class AttributesHandler {
         final LivingEntity entity = event.getEntity();
 
         LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
+
+        if (entity.getRidingEntity() instanceof LivingEntity) {
+            LivingEntity entityOther = (LivingEntity)entity.getRidingEntity();
+            LazyOptional<ISizeCap> lazyCapOther = entityOther.getCapability(SizeCapPro.sizeCapability);
+
+            float scaleHeight = lazyCap.filter(e -> e.getTrans()).map(e -> entity.getHeight() / e.getDefaultHeight()).orElse(0f);
+            float scaleHeightOther = lazyCapOther.filter(e -> e.getTrans()).map(e -> entityOther.getHeight() / e.getDefaultHeight()).orElse(0f);
+            float diff = scaleHeight - scaleHeightOther;
+            event.getMatrixStack().translate(0, (1 - diff) * .42F, 0);
+        }
+
         lazyCap.ifPresent(cap -> {
             if (cap.getTrans() == true) {
                 float scaleHeight = entity.getHeight() / cap.getDefaultHeight();
                 float scaleWidth = entity.getWidth() / cap.getDefaultWidth();
-
-                if (entity instanceof PlayerEntity) {
-                    if (entity.getRidingEntity() instanceof AbstractHorseEntity) {
-                        event.getMatrixStack().translate(0, (1 - scaleHeight) * .62F, 0);
-                    }
-                }
 
                 event.getMatrixStack().push();
                 event.getMatrixStack().scale(scaleWidth, scaleHeight, scaleWidth);

@@ -262,7 +262,7 @@ public class Gulliver {
             }
         }
 
-        if (player.isBeingRidden() && player.isSneaking()) {
+        if (player.isBeingRidden() && player.isSneaking() && player.isSwingInProgress) {
             for (Entity entity : player.getPassengers()) {
                 entity.stopRiding();
                 entity.addVelocity(0, -1, 0);
