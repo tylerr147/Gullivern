@@ -25,10 +25,10 @@ public class GulliverConfig {
             builder.push("General");
             MAX_SIZE = builder
                     .comment("Set the maximum player size")
-                    .defineInRange("MAX_SIZE", 100F, 1F, 100F);
+                    .defineInRange("MAX_SIZE", 100F, 1F, Float.MAX_VALUE);
             MAX_SIZE_USER = builder
                     .comment("Set the maximum player size (non-op)")
-                    .defineInRange("MAX_SIZE_USER", 20F, 1F, 20F);
+                    .defineInRange("MAX_SIZE_USER", 20F, 1F, Float.MAX_VALUE);
             HEALTH_MULTIPLIER = builder
                     .comment("Set the health multiplier")
                     .defineInRange("HEALTH_MULTIPLIER", 1.0F, Float.MIN_VALUE, Float.MAX_VALUE);
