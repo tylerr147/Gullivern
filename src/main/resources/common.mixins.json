@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8.2",
+  "package": "net.teamfruit.gulliver.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "LivingEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

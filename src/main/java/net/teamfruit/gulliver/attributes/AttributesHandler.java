@@ -2,10 +2,7 @@ package net.teamfruit.gulliver.attributes;
 
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifierManager;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,18 +25,18 @@ public class AttributesHandler {
 
         LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            final boolean hasHeightModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT);
-            final boolean hasWidthModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH);
+            final boolean hasHeightModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT.get());
+            final boolean hasWidthModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH.get());
 
-            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_HEIGHT);
-            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_WIDTH);
+            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT.get()) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_HEIGHT.get());
+            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH.get()) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_WIDTH.get());
 
             final EntitySize oldSize = event.getOldSize();
             float height = (float) (oldSize.height * heightAttribute);
             float width = (float) (oldSize.width * widthAttribute);
 
             /* Makes Sure to only Run the Code IF the Entity Has Modifiers */
-            if (!hasHeightModifier || !hasWidthModifier) {
+            if (hasHeightModifier || hasWidthModifier) {
                 /* If the Entity Does have a Modifier get it's size before changing it's size */
                 /* Handles Resizing while true */
                 width = MathHelper.clamp(width, 0.15F, width);
@@ -57,17 +54,17 @@ public class AttributesHandler {
 
         LazyOptional<ISizeCap> lazyCap = player.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            final boolean hasHeightModifier = player.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT);
-            final boolean hasWidthModifier = player.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH);
+            final boolean hasHeightModifier = player.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT.get());
+            final boolean hasWidthModifier = player.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH.get());
 
-            final double heightAttribute = player.getAttribute(Attributes.ENTITY_HEIGHT) == null ? 1 : player.getAttributeValue(Attributes.ENTITY_HEIGHT);
-            final double widthAttribute = player.getAttribute(Attributes.ENTITY_WIDTH) == null ? 1 : player.getAttributeValue(Attributes.ENTITY_WIDTH);
+            final double heightAttribute = player.getAttribute(Attributes.ENTITY_HEIGHT.get()) == null ? 1 : player.getAttributeValue(Attributes.ENTITY_HEIGHT.get());
+            final double widthAttribute = player.getAttribute(Attributes.ENTITY_WIDTH.get()) == null ? 1 : player.getAttributeValue(Attributes.ENTITY_WIDTH.get());
             float height = (float) (cap.getDefaultHeight() * heightAttribute);
             float width = (float) (cap.getDefaultWidth() * widthAttribute);
 
             if (cap.getTrans()) {
                 /* Makes Sure to only Run the Code IF the Entity Has Modifiers */
-                if (!hasHeightModifier || !hasWidthModifier) {
+                if (hasHeightModifier || hasWidthModifier) {
                     /* If the Entity Does have a Modifier get it's size before changing it's size */
                     /* Handles Resizing while true */
                     float eyeHeight = (float) (event.getOldEyeHeight() * heightAttribute);
@@ -86,15 +83,15 @@ public class AttributesHandler {
         final LivingEntity entity = event.getEntityLiving();
         LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            final boolean hasHeightModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT);
-            final boolean hasWidthModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH);
-            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_HEIGHT);
-            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_WIDTH);
+            final boolean hasHeightModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT.get());
+            final boolean hasWidthModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH.get());
+            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT.get()) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_HEIGHT.get());
+            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH.get()) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_WIDTH.get());
             float height = (float) (cap.getDefaultHeight() * heightAttribute);
             float width = (float) (cap.getDefaultWidth() * widthAttribute);
 
             /* Makes Sure to only Run the Code IF the Entity Has Modifiers */
-            if (!hasHeightModifier || !hasWidthModifier) {
+            if (hasHeightModifier || hasWidthModifier) {
                 /* If the Entity Does have a Modifier get it's size before changing it's size */
                 if (!cap.getTrans()) {
                     cap.setDefaultHeight(entity.getHeight());

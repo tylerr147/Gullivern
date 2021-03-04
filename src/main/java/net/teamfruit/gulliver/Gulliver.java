@@ -41,6 +41,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.teamfruit.gulliver.attributes.Attributes;
 import net.teamfruit.gulliver.attributes.AttributesHandler;
 import net.teamfruit.gulliver.compatibilities.Capabilities;
 import net.teamfruit.gulliver.compatibilities.CapabilitiesHandler;
@@ -61,6 +62,8 @@ public class Gulliver {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GulliverConfig.SPEC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigEvent);
+
+        Attributes.ATTRIBUTES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     public static DamageSource causeCrushingDamage(LivingEntity entity) {
