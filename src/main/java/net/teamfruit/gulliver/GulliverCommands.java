@@ -1,6 +1,5 @@
 package net.teamfruit.gulliver;
 
-import net.teamfruit.gulliver.attributes.Attributes;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.brigadier.CommandDispatcher;
@@ -16,13 +15,15 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.command.arguments.EntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.*;
+import net.minecraftforge.common.ForgeMod;
+import net.teamfruit.gulliver.attributes.Attributes;
 
 import java.util.Collection;
 import java.util.List;
@@ -71,8 +72,9 @@ public class GulliverCommands {
                                             }
                                             changeSize(sender, size);
                                             ctx.getSource().sendFeedback(
-                                                    sender.getDisplayName()
-                                                            .appendSibling(new StringTextComponent(" set their size to " + size)),
+                                                    new StringTextComponent("")
+                                                            .append(sender.getDisplayName())
+                                                            .append(new StringTextComponent(" set their size to " + size)),
                                                     false
                                             );
                                             return 1;
@@ -87,25 +89,25 @@ public class GulliverCommands {
                                                                     .filter(LivingEntity.class::isInstance)
                                                                     .map(LivingEntity.class::cast)
                                                                     .peek(entity -> changeSize(entity, size))
-                                                                    .collect(Collectors.groupingBy(entity -> entity.getDisplayName().getFormattedText()));
-                                                            ITextComponent text = TextComponentUtils.makeList(listEntity.entrySet(), entry -> {
+                                                                    .collect(Collectors.groupingBy(entity -> entity.getDisplayName().getString()));
+                                                            ITextComponent text = TextComponentUtils.func_240649_b_(listEntity.entrySet(), entry -> {
                                                                 int length = entry.getValue().size();
                                                                 if (length <= 0)
                                                                     return new StringTextComponent("");
                                                                 ITextComponent name = entry.getValue().get(0).getDisplayName();
                                                                 if (length > 1)
                                                                     return new StringTextComponent("")
-                                                                            .appendSibling(new StringTextComponent(length + "×")
-                                                                                    .setStyle(new Style().setColor(TextFormatting.GRAY)))
-                                                                            .appendSibling(name);
+                                                                            .append(new StringTextComponent(length + "×")
+                                                                                    .setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GRAY))))
+                                                                            .append(name);
                                                                 return name;
                                                             });
                                                             ctx.getSource().sendFeedback(
                                                                     new StringTextComponent("")
-                                                                            .appendSibling(new StringTextComponent("[").setStyle(new Style().setColor(TextFormatting.GRAY)))
-                                                                            .appendSibling(text)
-                                                                            .appendSibling(new StringTextComponent("]").setStyle(new Style().setColor(TextFormatting.GRAY)))
-                                                                            .appendSibling(new StringTextComponent(" set their size to " + size)),
+                                                                            .append(new StringTextComponent("[").setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GRAY))))
+                                                                            .append(text)
+                                                                            .append(new StringTextComponent("]").setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GRAY))))
+                                                                            .append(new StringTextComponent(" set their size to " + size)),
                                                                     true
                                                             );
                                                             return 1;
@@ -155,7 +157,7 @@ public class GulliverCommands {
                                                             if (list.isEmpty())
                                                                 ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.none"), false);
                                                             else {
-                                                                ITextComponent text = TextComponentUtils.makeList(list, Function.identity());
+                                                                ITextComponent text = TextComponentUtils.func_240649_b_(list, Function.identity());
                                                                 ctx.getSource().sendFeedback(new TranslationTextComponent("commands.whitelist.list", list.size(), text), false);
                                                             }
                                                             return 1;
@@ -206,37 +208,37 @@ public class GulliverCommands {
     }
 
     public void changeSize(LivingEntity sender, float size) {
-        Multimap<String, AttributeModifier> attributes = HashMultimap.create();
-        Multimap<String, AttributeModifier> removeableAttributes = HashMultimap.create();
-        Multimap<String, AttributeModifier> removeableAttributes2 = HashMultimap.create();
+        Multimap<Attribute, AttributeModifier> attributes = HashMultimap.create();
+        Multimap<Attribute, AttributeModifier> removeableAttributes = HashMultimap.create();
+        Multimap<Attribute, AttributeModifier> removeableAttributes2 = HashMultimap.create();
 
-        attributes.put(Attributes.ENTITY_HEIGHT.getName(), new AttributeModifier(uuidHeight, "Player Height", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        attributes.put(Attributes.ENTITY_WIDTH.getName(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, GulliverConfig.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
+        attributes.put(Attributes.ENTITY_HEIGHT, new AttributeModifier(uuidHeight, "Player Height", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+        attributes.put(Attributes.ENTITY_WIDTH, new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, 0.4 - 1, GulliverConfig.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (GulliverConfig.MODIFIER.SPEED_MODIFIER.get())
-            attributes.put(SharedMonsterAttributes.MOVEMENT_SPEED.getName(), new AttributeModifier(uuidSpeed, "Player Speed", (size - 1) / 2, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            attributes.put(net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED, new AttributeModifier(uuidSpeed, "Player Speed", (size - 1) / 2, AttributeModifier.Operation.MULTIPLY_TOTAL));
         if (GulliverConfig.MODIFIER.REACH_MODIFIER.get())
-            removeableAttributes.put(PlayerEntity.REACH_DISTANCE.getName(), new AttributeModifier(uuidReach1, "Player Reach 1", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            removeableAttributes.put(ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(uuidReach1, "Player Reach 1", size - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
         if (GulliverConfig.MODIFIER.REACH_MODIFIER.get())
-            removeableAttributes2.put(PlayerEntity.REACH_DISTANCE.getName(), new AttributeModifier(uuidReach2, "Player Reach 2", -MathHelper.clamp(size - 1, 0.33, Double.MAX_VALUE), AttributeModifier.Operation.MULTIPLY_TOTAL));
+            removeableAttributes2.put(ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(uuidReach2, "Player Reach 2", -MathHelper.clamp(size - 1, 0.33, Double.MAX_VALUE), AttributeModifier.Operation.MULTIPLY_TOTAL));
         if (GulliverConfig.MODIFIER.STRENGTH_MODIFIER.get())
-            attributes.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(uuidStrength, "Player Strength", size - 1, AttributeModifier.Operation.ADDITION));
+            attributes.put(net.minecraft.entity.ai.attributes.Attributes.ATTACK_DAMAGE, new AttributeModifier(uuidStrength, "Player Strength", size - 1, AttributeModifier.Operation.ADDITION));
         if (GulliverConfig.MODIFIER.HEALTH_MODIFIER.get())
-            attributes.put(SharedMonsterAttributes.MAX_HEALTH.getName(), new AttributeModifier(uuidHealth, "Player Health", (size - 1) * GulliverConfig.GENERAL.HEALTH_MULTIPLIER.get(), AttributeModifier.Operation.MULTIPLY_TOTAL));
+            attributes.put(net.minecraft.entity.ai.attributes.Attributes.MAX_HEALTH, new AttributeModifier(uuidHealth, "Player Health", (size - 1) * GulliverConfig.GENERAL.HEALTH_MULTIPLIER.get(), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (size > 1) {
-            sender.getAttributes().applyAttributeModifiers(removeableAttributes);
+            sender.getAttributeManager().reapplyModifiers(removeableAttributes);
         } else {
-            sender.getAttributes().removeAttributeModifiers(removeableAttributes);
+            sender.getAttributeManager().removeModifiers(removeableAttributes);
         }
 
         if (size < 1) {
-            sender.getAttributes().applyAttributeModifiers(removeableAttributes2);
+            sender.getAttributeManager().reapplyModifiers(removeableAttributes2);
         } else {
-            sender.getAttributes().removeAttributeModifiers(removeableAttributes2);
+            sender.getAttributeManager().removeModifiers(removeableAttributes2);
         }
 
-        sender.getAttributes().applyAttributeModifiers(attributes);
+        sender.getAttributeManager().reapplyModifiers(attributes);
         sender.setHealth(sender.getMaxHealth());
     }
 }

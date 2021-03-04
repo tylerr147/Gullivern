@@ -2,6 +2,7 @@ package net.teamfruit.gulliver;
 
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -18,7 +19,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -26,6 +27,7 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -38,7 +40,6 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.teamfruit.gulliver.attributes.AttributesHandler;
 import net.teamfruit.gulliver.compatibilities.Capabilities;
@@ -66,10 +67,13 @@ public class Gulliver {
         return new EntityDamageSource(MODID + ".crushing", entity);
     }
 
+    private CapabilitiesHandler caps = new CapabilitiesHandler();
+    private AttributesHandler handler = new AttributesHandler();
+
     public void preInit(FMLCommonSetupEvent event) {
         Capabilities.init();
-        MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
-        MinecraftForge.EVENT_BUS.register(new AttributesHandler());
+        MinecraftForge.EVENT_BUS.register(caps);
+        MinecraftForge.EVENT_BUS.register(handler);
     }
 
     public void onConfigEvent(ModConfig.Loading event) {
@@ -77,8 +81,8 @@ public class Gulliver {
     }
 
     @SubscribeEvent
-    public void onServerStarting(FMLServerStartingEvent event) {
-        new GulliverCommands().register(event.getCommandDispatcher());
+    public void onServerStarting(RegisterCommandsEvent event) {
+        new GulliverCommands().register(event.getDispatcher());
     }
 
     @SubscribeEvent
@@ -193,12 +197,12 @@ public class Gulliver {
                     || (block == Blocks.CLAY)) {
                 if (player.collidedHorizontally) {
                     if (!player.isSneaking()) {
-                        Vec3d motion = player.getMotion();
+                        Vector3d motion = player.getMotion();
                         player.setMotion(motion.x, 0.1D, motion.z);
                     }
 
                     if (player.isSneaking()) {
-                        Vec3d motion = player.getMotion();
+                        Vector3d motion = player.getMotion();
                         player.setMotion(motion.x, 0.0D, motion.z);
                     }
                 }
@@ -209,12 +213,12 @@ public class Gulliver {
                     if (ClimbingHandler.canClimb(player, facing)) {
                         if (player.collidedHorizontally) {
                             if (!player.isSneaking()) {
-                                Vec3d motion = player.getMotion();
+                                Vector3d motion = player.getMotion();
                                 player.setMotion(motion.x, 0.1D, motion.z);
                             }
 
                             if (player.isSneaking()) {
-                                Vec3d motion = player.getMotion();
+                                Vector3d motion = player.getMotion();
                                 player.setMotion(motion.x, 0.0D, motion.z);
                             }
                         }
@@ -222,7 +226,7 @@ public class Gulliver {
                 }
 
                 if (stack.getItem() == Items.PAPER && GulliverConfig.FEATURE.GLIDE_WITH_PAPER.get()) {
-                    if (!player.onGround) {
+                    if (!player.isOnGround()) {
                         player.jumpMovementFactor = 0.02F * 1.75F;
                         player.fallDistance = 0;
 
@@ -232,7 +236,7 @@ public class Gulliver {
                                 serverPlayer.connection.floating = false;
                         }
 
-                        Vec3d motion = player.getMotion();
+                        Vector3d motion = player.getMotion();
                         if (motion.getY() < 0D) {
                             player.setMotion(motion.mul(1, 0.6D, 1));
                         }
@@ -301,7 +305,7 @@ public class Gulliver {
 
             if (player.isSneaking() || player.isSprinting()) {
                 if (player.getHeight() < 1.8F) {
-                    Vec3d motion = player.getMotion();
+                    Vector3d motion = player.getMotion();
                     player.setMotion(motion.x, 0.42F, motion.z);
                 }
             }
@@ -341,24 +345,25 @@ public class Gulliver {
         PlayerEntity player = Minecraft.getInstance().player;
         float scale = player.getHeight() / 1.8F;
 
-        if (Minecraft.getInstance().gameSettings.thirdPersonView == 1) {
-            if (player.getHeight() > 1.8F) event.getMatrixStack().translate(0, 0, -scale * 2);
-        }
-
-        if (Minecraft.getInstance().gameSettings.thirdPersonView == 2) {
-            if (player.getHeight() > 1.8F) event.getMatrixStack().translate(0, 0, scale * 2);
+        switch (Minecraft.getInstance().gameSettings.getPointOfView()) {
+            case THIRD_PERSON_BACK:
+                if (player.getHeight() > 1.8F) event.getMatrixStack().translate(0, 0, -scale * 2);
+                break;
+            case THIRD_PERSON_FRONT:
+                if (player.getHeight() > 1.8F) event.getMatrixStack().translate(0, 0, scale * 2);
+                break;
         }
     }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void onEntityRenderPre(RenderLivingEvent.Pre event) {
+    public void onEntityRenderPre(RenderLivingEvent.Pre<PlayerEntity, PlayerModel<PlayerEntity>> event) {
         if (GulliverConfig.FEATURE.DO_ADJUSTED_RENDER.get()) {
             final LivingEntity entity = event.getEntity();
 
             LazyOptional<ISizeCap> capLazy = entity.getCapability(SizeCapPro.sizeCapability);
             capLazy.ifPresent(cap -> {
-                if (cap.getTrans() == true) {
+                if (cap.getTrans()) {
                     float scale = entity.getHeight() / cap.getDefaultHeight();
 
                     if (scale < 0.4F) {
@@ -372,13 +377,13 @@ public class Gulliver {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void onLivingRenderPost(RenderLivingEvent.Post event) {
+    public void onLivingRenderPost(RenderLivingEvent.Post<PlayerEntity, PlayerModel<PlayerEntity>> event) {
         if (GulliverConfig.FEATURE.DO_ADJUSTED_RENDER.get()) {
             final LivingEntity entity = event.getEntity();
 
             LazyOptional<ISizeCap> capLazy = entity.getCapability(SizeCapPro.sizeCapability);
             capLazy.ifPresent(cap -> {
-                if (cap.getTrans() == true) {
+                if (cap.getTrans()) {
                     float scale = entity.getHeight() / cap.getDefaultHeight();
 
                     if (scale < 0.4F) {

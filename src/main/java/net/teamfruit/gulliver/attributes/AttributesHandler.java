@@ -1,9 +1,11 @@
 package net.teamfruit.gulliver.attributes;
 
+import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifierManager;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,17 +21,6 @@ import net.teamfruit.gulliver.event.EntitySizeEvent;
 
 public class AttributesHandler {
     @SubscribeEvent
-    public void attachAttributes(EntityEvent.EntityConstructing event) {
-        if (event.getEntity() instanceof LivingEntity) {
-            final LivingEntity entity = (LivingEntity) event.getEntity();
-            final AbstractAttributeMap map = entity.getAttributes();
-
-            map.registerAttribute(Attributes.ENTITY_HEIGHT);
-            map.registerAttribute(Attributes.ENTITY_WIDTH);
-        }
-    }
-
-    @SubscribeEvent
     public void onEntityGetSize(EntitySizeEvent event) {
         if (!(event.getEntity() instanceof LivingEntity))
             return;
@@ -37,18 +28,18 @@ public class AttributesHandler {
 
         LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            final boolean hasHeightModifier = entity.getAttribute(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
-            final boolean hasWidthModifier = entity.getAttribute(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
+            final boolean hasHeightModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT);
+            final boolean hasWidthModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH);
 
-            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT).getValue();
-            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH).getValue();
+            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_HEIGHT);
+            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_WIDTH);
 
             final EntitySize oldSize = event.getOldSize();
             float height = (float) (oldSize.height * heightAttribute);
             float width = (float) (oldSize.width * widthAttribute);
 
             /* Makes Sure to only Run the Code IF the Entity Has Modifiers */
-            if (hasHeightModifier != true || hasWidthModifier != true) {
+            if (!hasHeightModifier || !hasWidthModifier) {
                 /* If the Entity Does have a Modifier get it's size before changing it's size */
                 /* Handles Resizing while true */
                 width = MathHelper.clamp(width, 0.15F, width);
@@ -59,32 +50,32 @@ public class AttributesHandler {
     }
 
     @SubscribeEvent
-    public void onEyeHeight(EntityEvent.EyeHeight event) {
+    public void onEyeHeight(EntityEvent.Size event) {
         if (!(event.getEntity() instanceof LivingEntity))
             return;
         final LivingEntity player = (LivingEntity) event.getEntity();
 
         LazyOptional<ISizeCap> lazyCap = player.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            final boolean hasHeightModifier = player.getAttribute(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
-            final boolean hasWidthModifier = player.getAttribute(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
+            final boolean hasHeightModifier = player.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT);
+            final boolean hasWidthModifier = player.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH);
 
-            final double heightAttribute = player.getAttribute(Attributes.ENTITY_HEIGHT).getValue();
-            final double widthAttribute = player.getAttribute(Attributes.ENTITY_WIDTH).getValue();
+            final double heightAttribute = player.getAttribute(Attributes.ENTITY_HEIGHT) == null ? 1 : player.getAttributeValue(Attributes.ENTITY_HEIGHT);
+            final double widthAttribute = player.getAttribute(Attributes.ENTITY_WIDTH) == null ? 1 : player.getAttributeValue(Attributes.ENTITY_WIDTH);
             float height = (float) (cap.getDefaultHeight() * heightAttribute);
             float width = (float) (cap.getDefaultWidth() * widthAttribute);
 
-            if (cap.getTrans() == true) {
+            if (cap.getTrans()) {
                 /* Makes Sure to only Run the Code IF the Entity Has Modifiers */
-                if (hasHeightModifier != true || hasWidthModifier != true) {
+                if (!hasHeightModifier || !hasWidthModifier) {
                     /* If the Entity Does have a Modifier get it's size before changing it's size */
                     /* Handles Resizing while true */
-                    float eyeHeight = (float) (event.getOldHeight() * heightAttribute);
+                    float eyeHeight = (float) (event.getOldEyeHeight() * heightAttribute);
                     eyeHeight = (height >= 1.6F) ? eyeHeight : (eyeHeight * 0.9876542F);
-                    event.setNewHeight(eyeHeight);
+                    event.setNewEyeHeight(eyeHeight);
                 } else /* If the Entity Does not have any Modifiers */ {
                     /* Returned the Entities Size Back to Normal */
-                    player.eyeHeight = event.getOldHeight() * 0.85F;
+                    player.eyeHeight = event.getOldEyeHeight() * 0.85F;
                 }
             }
         });
@@ -95,31 +86,31 @@ public class AttributesHandler {
         final LivingEntity entity = event.getEntityLiving();
         LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            final boolean hasHeightModifier = entity.getAttribute(Attributes.ENTITY_HEIGHT).func_225505_c_().isEmpty();
-            final boolean hasWidthModifier = entity.getAttribute(Attributes.ENTITY_WIDTH).func_225505_c_().isEmpty();
-            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT).getValue();
-            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH).getValue();
+            final boolean hasHeightModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT);
+            final boolean hasWidthModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH);
+            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_HEIGHT);
+            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_WIDTH);
             float height = (float) (cap.getDefaultHeight() * heightAttribute);
             float width = (float) (cap.getDefaultWidth() * widthAttribute);
 
             /* Makes Sure to only Run the Code IF the Entity Has Modifiers */
-            if (hasHeightModifier != true || hasWidthModifier != true) {
+            if (!hasHeightModifier || !hasWidthModifier) {
                 /* If the Entity Does have a Modifier get it's size before changing it's size */
-                if (cap.getTrans() != true) {
+                if (!cap.getTrans()) {
                     cap.setDefaultHeight(entity.getHeight());
                     cap.setDefaultWidth(entity.getWidth());
                     cap.setTrans(true);
                 }
 
                 /* Handles Resizing while true */
-                if (cap.getTrans() == true) {
+                if (cap.getTrans()) {
                     width = MathHelper.clamp(width, 0.04F, width);
                     height = MathHelper.clamp(height, 0.08F, height);
                     entity.recalculateSize();
                 }
             } else /* If the Entity Does not have any Modifiers */ {
                 /* Returned the Entities Size Back to Normal */
-                if (cap.getTrans() == true) {
+                if (cap.getTrans()) {
                     entity.recalculateSize();
                     cap.setTrans(false);
                 }
@@ -129,23 +120,23 @@ public class AttributesHandler {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void onEntityRenderPre(RenderLivingEvent.Pre event) {
+    public void onEntityRenderPre(RenderLivingEvent.Pre<PlayerEntity, PlayerModel<PlayerEntity>> event) {
         final LivingEntity entity = event.getEntity();
 
         LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
 
         if (entity.getRidingEntity() instanceof LivingEntity) {
-            LivingEntity entityOther = (LivingEntity)entity.getRidingEntity();
+            LivingEntity entityOther = (LivingEntity) entity.getRidingEntity();
             LazyOptional<ISizeCap> lazyCapOther = entityOther.getCapability(SizeCapPro.sizeCapability);
 
-            float scaleHeight = lazyCap.filter(e -> e.getTrans()).map(e -> entity.getHeight() / e.getDefaultHeight()).orElse(0f);
-            float scaleHeightOther = lazyCapOther.filter(e -> e.getTrans()).map(e -> entityOther.getHeight() / e.getDefaultHeight()).orElse(0f);
+            float scaleHeight = lazyCap.filter(ISizeCap::getTrans).map(e -> entity.getHeight() / e.getDefaultHeight()).orElse(0f);
+            float scaleHeightOther = lazyCapOther.filter(ISizeCap::getTrans).map(e -> entityOther.getHeight() / e.getDefaultHeight()).orElse(0f);
             float diff = scaleHeight - scaleHeightOther;
             event.getMatrixStack().translate(0, (1 - diff) * .42F, 0);
         }
 
         lazyCap.ifPresent(cap -> {
-            if (cap.getTrans() == true) {
+            if (cap.getTrans()) {
                 float scaleHeight = entity.getHeight() / cap.getDefaultHeight();
                 float scaleWidth = entity.getWidth() / cap.getDefaultWidth();
 
@@ -157,12 +148,12 @@ public class AttributesHandler {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void onLivingRenderPost(RenderLivingEvent.Post event) {
+    public void onLivingRenderPost(RenderLivingEvent.Post<PlayerEntity, PlayerModel<PlayerEntity>> event) {
         final LivingEntity entity = event.getEntity();
 
         LazyOptional<ISizeCap> lazyCap = entity.getCapability(SizeCapPro.sizeCapability);
         lazyCap.ifPresent(cap -> {
-            if (cap.getTrans() == true) {
+            if (cap.getTrans()) {
                 event.getMatrixStack().pop();
             }
         });

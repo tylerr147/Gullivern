@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="[31,)"
 issueTrackerURL="https://github.com/Kamesuta/Gulliver-1.15.2/issues"
+license="MIT"
 
 [[mods]]
 modId="gulliver"
