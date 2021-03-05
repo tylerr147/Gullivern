@@ -3,6 +3,7 @@
   "minVersion": "0.8.2",
   "package": "net.teamfruit.gulliver.mixin",
   "compatibilityLevel": "JAVA_8",
+  "refmap": "gulliver.refmap.json",
   "mixins": [
     "EntityMixin",
     "LivingEntityMixin",
