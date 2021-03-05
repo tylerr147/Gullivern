@@ -1,28 +1,28 @@
 modLoader="javafml"
 loaderVersion="[31,)"
-issueTrackerURL="https://github.com/Kamesuta/Gulliver-1.15.2/issues"
+issueTrackerURL="https://github.com/TeamKun/Gullivern/issues"
 license="MIT"
 
 [[mods]]
 modId="gulliver"
 version="${file.jarVersion}"
-displayName="Gulliver-1.15.2"
-displayURL="https://github.com/Kamesuta/Gulliver-1.15.2/"
+displayName="Gullivern"
+displayURL="https://github.com/TeamKun/Gullivern"
 logoFile="logo.png"
 credits="Kamesuta"
 authors="Kamesuta"
 description='''
 A remake of some of the features from the Gulliver Mod.
 '''
-[[dependencies.examplemod]]
+[[dependencies.gulliver]]
     modId="forge" #mandatory
     mandatory=true #mandatory
     versionRange="[31,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.examplemod]]
+[[dependencies.gulliver]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.4, 1.16.5]"
     ordering="NONE"
     side="BOTH"
