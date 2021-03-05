@@ -8,8 +8,8 @@ import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraftforge.common.MinecraftForge;
  
 public class GulliverHooks { 
-    public static boolean fireMoveEvent(boolean isInvulnerableDimensionChange, ServerPlayNetHandler handler, ServerPlayerEntity player) {
-        PlayNetMoveEvent event = new PlayNetMoveEvent(handler, player);
+    public static boolean fireMoveEvent(boolean isInvulnerableDimensionChange, ServerPlayerEntity player) {
+        PlayNetMoveEvent event = new PlayNetMoveEvent(player);
         boolean canceled = MinecraftForge.EVENT_BUS.post(event);
         return isInvulnerableDimensionChange || canceled;
     }

@@ -4,7 +4,10 @@
   "package": "net.teamfruit.gulliver.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "LivingEntityMixin"
+    "EntityMixin",
+    "LivingEntityMixin",
+    "PlayerEntityMixin",
+    "ServerPlayNetHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
