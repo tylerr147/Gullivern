@@ -33,6 +33,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -395,5 +396,17 @@ public class Gulliver {
                 }
             });
         }
+    }
+
+    @SubscribeEvent
+    public void onPlayerClone(PlayerEvent.Clone event) {
+        // Fetch & Copy Capability
+        PlayerEntity playerOld = event.getOriginal();
+        PlayerEntity playerNew = event.getPlayer();
+        GulliverSize.copySize(playerOld, playerNew);
+
+        // Copy Health on Dimension Change
+        if (!event.isWasDeath())
+            playerNew.setHealth(playerOld.getHealth());
     }
 }
