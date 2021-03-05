@@ -31,7 +31,7 @@ public class GulliverCommands {
                 LiteralArgumentBuilder.<CommandSource>literal("size")
                         .requires(cs -> cs.hasPermissionLevel(0))
                         .then(
-                                RequiredArgumentBuilder.<CommandSource, Float>argument("size", FloatArgumentType.floatArg(0.125F))
+                                RequiredArgumentBuilder.<CommandSource, Float>argument("size", FloatArgumentType.floatArg(0.05F))
                                         .requires(cs -> {
                                             if (!GulliverConfig.GENERAL.REQUIRE_PERMISSION.get())
                                                 return true;

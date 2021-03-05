@@ -27,8 +27,8 @@ public class GulliverSize {
         Multimap<Attribute, AttributeModifier> removeableAttributes = HashMultimap.create();
         Multimap<Attribute, AttributeModifier> removeableAttributes2 = HashMultimap.create();
 
-        attributes.put(Attributes.ENTITY_HEIGHT.get(), new AttributeModifier(uuidHeight, "Player Height", MathHelper.clamp(size - 1, .1 - 1, GulliverConfig.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
-        attributes.put(Attributes.ENTITY_WIDTH.get(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, .1 - 1, GulliverConfig.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
+        attributes.put(Attributes.ENTITY_HEIGHT.get(), new AttributeModifier(uuidHeight, "Player Height", MathHelper.clamp(size - 1, .01 - 1, GulliverConfig.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
+        attributes.put(Attributes.ENTITY_WIDTH.get(), new AttributeModifier(uuidWidth, "Player Width", MathHelper.clamp(size - 1, .01 - 1, GulliverConfig.GENERAL.MAX_SIZE.get()), AttributeModifier.Operation.MULTIPLY_TOTAL));
 
         if (GulliverConfig.MODIFIER.SPEED_MODIFIER.get())
             attributes.put(net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED, new AttributeModifier(uuidSpeed, "Player Speed", (size - 1) / 2, AttributeModifier.Operation.MULTIPLY_TOTAL));

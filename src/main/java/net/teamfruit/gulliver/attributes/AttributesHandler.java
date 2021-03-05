@@ -39,8 +39,8 @@ public class AttributesHandler {
             if (hasHeightModifier || hasWidthModifier) {
                 /* If the Entity Does have a Modifier get it's size before changing it's size */
                 /* Handles Resizing while true */
-                width = MathHelper.clamp(width, 0.05F, width);
-                height = MathHelper.clamp(height, 0.25F, height);
+                width = MathHelper.clamp(width, 0.005F, width);
+                height = MathHelper.clamp(height, 0.025F, height);
                 event.setNewSize(EntitySize.flexible(width, height));
             }
         });

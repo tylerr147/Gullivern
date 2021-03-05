@@ -370,7 +370,7 @@ public class Gulliver {
                 if (cap.getTrans()) {
                     float scale = entity.getHeight() / cap.getDefaultHeight();
 
-                    if (scale < 0.1F) {
+                    if (scale < 0.01F) {
                         event.getMatrixStack().push();
                         event.getMatrixStack().scale(scale * 2.5F, 1, scale * 2.5F);
                     }
@@ -390,7 +390,7 @@ public class Gulliver {
                 if (cap.getTrans()) {
                     float scale = entity.getHeight() / cap.getDefaultHeight();
 
-                    if (scale < 0.1F) {
+                    if (scale < 0.01F) {
                         event.getMatrixStack().pop();
                     }
                 }
