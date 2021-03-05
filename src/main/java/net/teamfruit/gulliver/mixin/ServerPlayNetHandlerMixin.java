@@ -2,7 +2,8 @@ package net.teamfruit.gulliver.mixin;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.ServerPlayNetHandler;
-import net.teamfruit.gulliver.event.GulliverHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.teamfruit.gulliver.event.PlayNetMoveEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,6 +16,8 @@ public class ServerPlayNetHandlerMixin {
 
     @Redirect(method = "processPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/ServerPlayerEntity;isInvulnerableDimensionChange()Z"))
     private boolean isInvulnerableDimensionChange(ServerPlayerEntity entity) {
-        return GulliverHooks.fireMoveEvent(entity.isInvulnerableDimensionChange(), player);
+        PlayNetMoveEvent event = new PlayNetMoveEvent(player);
+        boolean canceled = MinecraftForge.EVENT_BUS.post(event);
+        return entity.isInvulnerableDimensionChange() || canceled;
     }
 }
