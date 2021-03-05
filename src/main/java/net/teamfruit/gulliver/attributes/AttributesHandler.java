@@ -39,7 +39,7 @@ public class AttributesHandler {
             if (hasHeightModifier || hasWidthModifier) {
                 /* If the Entity Does have a Modifier get it's size before changing it's size */
                 /* Handles Resizing while true */
-                width = MathHelper.clamp(width, 0.15F, width);
+                width = MathHelper.clamp(width, 0.05F, width);
                 height = MathHelper.clamp(height, 0.25F, height);
                 event.setNewSize(EntitySize.flexible(width, height));
             }
@@ -85,10 +85,6 @@ public class AttributesHandler {
         lazyCap.ifPresent(cap -> {
             final boolean hasHeightModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_HEIGHT.get());
             final boolean hasWidthModifier = entity.getAttributeManager().hasAttributeInstance(Attributes.ENTITY_WIDTH.get());
-            final double heightAttribute = entity.getAttribute(Attributes.ENTITY_HEIGHT.get()) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_HEIGHT.get());
-            final double widthAttribute = entity.getAttribute(Attributes.ENTITY_WIDTH.get()) == null ? 1 : entity.getAttributeValue(Attributes.ENTITY_WIDTH.get());
-            float height = (float) (cap.getDefaultHeight() * heightAttribute);
-            float width = (float) (cap.getDefaultWidth() * widthAttribute);
 
             /* Makes Sure to only Run the Code IF the Entity Has Modifiers */
             if (hasHeightModifier || hasWidthModifier) {
@@ -100,9 +96,7 @@ public class AttributesHandler {
                 }
 
                 /* Handles Resizing while true */
-                if (cap.getTrans()) {
-                    width = MathHelper.clamp(width, 0.04F, width);
-                    height = MathHelper.clamp(height, 0.08F, height);
+                else {
                     entity.recalculateSize();
                 }
             } else /* If the Entity Does not have any Modifiers */ {
