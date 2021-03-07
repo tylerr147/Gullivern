@@ -1,8 +1,11 @@
-[![Latest Tag](https://img.shields.io/github/tag/Kamesuta/Gulliver-1.15.2.svg?label=Latest%20Tag&style=flat)](https://github.com/Kamesuta/Gulliver-1.15.2/tags)
-[![Latest Release](https://img.shields.io/github/release/Kamesuta/Gulliver-1.15.2.svg?label=Latest%20Release&style=flat)](https://github.com/Kamesuta/Gulliver-1.15.2/releases)
+Readme is broken, too lazy to rewrite it until actual mod is relatively done
 
-# Gulliver-1.15.2
-![Minecraft 1.15.2](https://img.shields.io/badge/Minecraft-1.15.2-green.svg?style=flat)
+
+[![Latest Tag](https://img.shields.io/github/tag/Kamesuta/Resize-1.16.5.svg?label=Latest%20Tag&style=flat)](https://github.com/Kamesuta/Resize-1.16.5/tags)
+[![Latest Release](https://img.shields.io/github/release/Kamesuta/Resize-1.16.5.svg?label=Latest%20Release&style=flat)](https://github.com/Kamesuta/Resize-1.16.5/releases)
+
+# Resize-1.16.5
+![Minecraft 1.16.5](https://img.shields.io/badge/Minecraft-1.16.5-green.svg?style=flat)
 
 ## Table of Contents
 
@@ -15,7 +18,7 @@
 
 ## About
 
-Gulliver Mod for 1.15.2
+Resize Mod for 1.16.5
 
 ## Contacts
 
@@ -23,26 +26,26 @@ Gulliver Mod for 1.15.2
 
 ## License
 
-* Gulliver-1.15.2
-  - (c) 2020 Kamesuta
-  - [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-3.0)
-* Gulliver-Reborn
-  - (c) 2019 CammiePone
-  - [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-3.0)
+* Resize-1.16.5
+    - (c) 2020 Kamesuta
+    - [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-3.0)
+* Resize-Reborn
+    - (c) 2019 CammiePone
+    - [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## Downloads
 
-Downloads can be found on [github](https://github.com/Kamesuta/Gulliver-1.15.2/releases).
+Downloads can be found on [github](https://github.com/tylerr147/Resize-1.16.5/releases).
 
 ## Usage
 
 ### Size Change
 `/size <size>` for non-op player  
-`/size <size> [players]` for op player  
+`/size <size> [players]` for op player
 
 ### Whitelist
-`/gulliver whitelist <on|off>`  
-`/gulliver whitelist <add|remove> <players>`  
+`/Resize whitelist <on|off>`  
+`/Resize whitelist <add|remove> <players>`
 
 ### Encoding
 
@@ -54,5 +57,5 @@ Thanks to
 
 * Notch et al for Minecraft
 * Lex et al for MinecraftForge
-* Kamesuta, CammiePone for Gulliver-1.15.2
-* all [contributors](https://github.com/Kamesuta/Gulliver-1.15.2/graphs/contributors)
+* Kamesuta, CammiePone for Resize-1.16.5
+* all [contributors](https://github.com/Kamesuta/Resize-1.16.5/graphs/contributors)

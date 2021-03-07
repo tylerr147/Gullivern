@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8.2",
+  "package": "com.tyler.resize",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "resize.refmap.json",
+  "mixins": [
+    "mixin.EntityMixin",
+    "mixin.LivingEntityMixin",
+    "mixin.PlayerEntityMixin",
+    "mixin.ServerPlayNetHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
