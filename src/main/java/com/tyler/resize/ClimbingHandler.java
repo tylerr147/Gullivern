@@ -26,24 +26,12 @@ public class ClimbingHandler {
         final boolean hbpass = h.allowsMovement(world, pos.add(0, 1, 0), PathType.WATER);
         final boolean bbpass = b.allowsMovement(world, pos, PathType.WATER);
 
-        if (bbpass) {
+        if (bbpass) {//TODO: make this understandable?
             if (!fbpass) {
                 if ((!(tbpass || hbpass))) {
-                    if ((t.getBlock() instanceof PaneBlock)) {
-
-                    }
-                    if ((h.getBlock() instanceof StairsBlock)) {
-                        if (h.get(StairsBlock.FACING) == facing.getOpposite()) {
-                            return true;
-                        }
-                    }
-                    if ((h.getBlock() instanceof SlabBlock)) {
-                        if (!h.isNormalCube(world, pos)) {
-                            if (h.get(SlabBlock.TYPE) == SlabType.TOP) {
-                                return true;
-                            }
-                        }
-                    }
+                    if ((h.getBlock() instanceof StairsBlock)) if (h.get(StairsBlock.FACING) == facing.getOpposite()) return true;
+                    if ((h.getBlock() instanceof SlabBlock)) if (!h.isNormalCube(world, pos)) return h.get(SlabBlock.TYPE) == SlabType.TOP;
+                    
                     return false;
                 }
                 return true;
@@ -57,13 +45,7 @@ public class ClimbingHandler {
                 return true;
             }
         }
-        if ((b.getBlock() instanceof SlabBlock)) {
-            if (!h.isNormalCube(world, pos)) {
-                if (b.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
-                    return true;
-                }
-            }
-        }
+        if ((b.getBlock() instanceof SlabBlock) && !h.isNormalCube(world, pos)) return b.get(SlabBlock.TYPE) == SlabType.BOTTOM;
         return false;
     }
 }

@@ -1,18 +1,31 @@
 package com.tyler.resize;
 
+import com.tyler.resize.attributes.Attributes;
+import com.tyler.resize.attributes.AttributesHandler;
+import com.tyler.resize.compatibilities.Capabilities;
+import com.tyler.resize.compatibilities.CapabilitiesHandler;
+import com.tyler.resize.compatibilities.sizeCap.ISizeCap;
+import com.tyler.resize.compatibilities.sizeCap.SizeCapPro;
 import com.tyler.resize.event.PlayNetMoveEvent;
 import net.minecraft.block.*;
-import net.minecraft.client.*;
-import net.minecraft.client.renderer.entity.model.*;
-import net.minecraft.entity.*;
-import net.minecraft.entity.monster.*;
-import net.minecraft.entity.passive.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.item.*;
-import net.minecraft.pathfinding.*;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.vector.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.model.PlayerModel;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.monster.SpiderEntity;
+import net.minecraft.entity.passive.OcelotEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,12 +48,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import com.tyler.resize.attributes.Attributes;
-import com.tyler.resize.attributes.AttributesHandler;
-import com.tyler.resize.compatibilities.Capabilities;
-import com.tyler.resize.compatibilities.CapabilitiesHandler;
-import com.tyler.resize.compatibilities.sizeCap.ISizeCap;
-import com.tyler.resize.compatibilities.sizeCap.SizeCapPro;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,14 +58,15 @@ public class Resize {
 	public static final Logger LOGGER = LogManager.getLogger(NAME);
 	
 	public Resize() {
+		LOGGER.info("Resize constructor called");
 		MinecraftForge.EVENT_BUS.register(this);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResizeConfig.SPEC);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigEvent);
-		
 		Attributes.ATTRIBUTES.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 	
+	//apply damage when crushed by a large entity
 	public static DamageSource causeCrushingDamage(LivingEntity entity) {
 		return new EntityDamageSource(MODID + ".crushing", entity);
 	}
@@ -74,6 +82,7 @@ public class Resize {
 	
 	public void onConfigEvent(ModConfig.Loading event) {
 		// Config.SPEC.setConfig(event.getConfig().getConfigData());
+		//TODO: set up configs
 	}
 	
 	@SubscribeEvent
@@ -81,7 +90,8 @@ public class Resize {
 		new ResizeCommands().register(event.getDispatcher());
 	}
 	
-	@SubscribeEvent
+	
+	@SubscribeEvent //factor size into fall damage
 	public void onPlayerFall(LivingFallEvent event) {
 		if (event.getEntityLiving() instanceof PlayerEntity) {
 			PlayerEntity player = (PlayerEntity) event.getEntityLiving();
@@ -92,7 +102,8 @@ public class Resize {
 		}
 	}
 	
-	@SubscribeEvent
+	//TODO: move to separate mod
+	@SubscribeEvent //check and assure if crushing damage should be applied
 	public void onLivingTick(LivingUpdateEvent event) {
 		LivingEntity entity = event.getEntityLiving();
 		World world = event.getEntityLiving().world;
@@ -106,7 +117,8 @@ public class Resize {
 		}
 	}
 	
-	@SubscribeEvent
+	//TODO: move to separate mod
+	@SubscribeEvent //mobs don't notice small players
 	public void onTargetEntity(LivingSetAttackTargetEvent event) {
 		if (event.getTarget() instanceof PlayerEntity && event.getEntityLiving() instanceof MobEntity && ResizeConfig.FEATURE.SMALL_IS_INVISIBLE_TO_NONCATS_OR_NONSPIDERS.get()) {
 			PlayerEntity player = (PlayerEntity) event.getTarget();
@@ -120,7 +132,8 @@ public class Resize {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent //TODO: figure this out
+	// why cancel movement if size is greater than 2?
 	public void onPlayNetMove(PlayNetMoveEvent event) {
 		ServerPlayerEntity serverPlayer = event.getPlayer();
 		
@@ -129,7 +142,7 @@ public class Resize {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent //multi-tick movements?
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		PlayerEntity player = event.player;
 		World world = event.player.world;
@@ -148,15 +161,6 @@ public class Resize {
 			BlockState state = world.getBlockState(pos);
 			Block block = state.getBlock();
 			float ratio = (player.getHeight() / 1.8F) / 2;
-
-			/*
-			if(block instanceof BlockRedFlower
-				|| state == Blocks.DOUBLE_PLANT.getDefaultState().withProperty(BlockDoublePlant.VARIANT, BlockDoublePlant.EnumPlantType.ROSE)
-				&& Config.ROSES_HURT)
-			{
-				player.attackEntityFrom(DamageSource.CACTUS, 1);
-			}
-			 */
 			
 			if (!player.abilities.isFlying
 					&& ResizeConfig.FEATURE.PLANTS_SLOW_SMALL_DOWN.get()
@@ -176,7 +180,6 @@ public class Resize {
 			BlockPos pos = new BlockPos(player.getPosX(), player.getPosY(), player.getPosZ());
 			BlockState state = world.getBlockState(pos.add(0, 0, 0).offset(facing));
 			Block block = state.getBlock();
-			boolean canPass = state.allowsMovement(world, pos.offset(facing), PathType.LAND);
 			
 			if (ClimbingHandler.canClimb(player, facing)
 					&& ResizeConfig.FEATURE.CLIMB_SOME_BLOCKS.get()
@@ -191,33 +194,13 @@ public class Resize {
 					|| (block instanceof GrassPathBlock)
 					|| (block instanceof GravelBlock)
 					|| (block == Blocks.CLAY)) {
-				if (player.collidedHorizontally) {
-					if (!player.isSneaking()) {
-						Vector3d motion = player.getMotion();
-						player.setMotion(motion.x, 0.1D, motion.z);
-					}
-					
-					if (player.isSneaking()) {
-						Vector3d motion = player.getMotion();
-						player.setMotion(motion.x, 0.0D, motion.z);
-					}
-				}
+				doPlayerClimb(player);
 			}
 			
 			for (ItemStack stack : player.getHeldEquipment()) {
 				if (stack.getItem() == Items.SLIME_BALL || stack.getItem() == Item.getItemFromBlock(Blocks.SLIME_BLOCK) && ResizeConfig.FEATURE.CLIMB_WITH_SLIME.get()) {
 					if (ClimbingHandler.canClimb(player, facing)) {
-						if (player.collidedHorizontally) {
-							if (!player.isSneaking()) {
-								Vector3d motion = player.getMotion();
-								player.setMotion(motion.x, 0.1D, motion.z);
-							}
-							
-							if (player.isSneaking()) {
-								Vector3d motion = player.getMotion();
-								player.setMotion(motion.x, 0.0D, motion.z);
-							}
-						}
+						doPlayerClimb(player);
 					}
 				}
 				
@@ -270,6 +253,21 @@ public class Resize {
 		}
 	}
 	
+	//TODO: move to separate mod
+	private void doPlayerClimb(PlayerEntity player) {
+		if (player.collidedHorizontally) {
+			if (!player.isSneaking()) {
+				Vector3d motion = player.getMotion();
+				player.setMotion(motion.x, 0.1D, motion.z);
+			}
+			
+			if (player.isSneaking()) {
+				Vector3d motion = player.getMotion();
+				player.setMotion(motion.x, 0.0D, motion.z);
+			}
+		}
+	}
+	
 	@SubscribeEvent
 	public void onEntityInteract(EntityInteract event) {
 		if (event.getTarget() instanceof LivingEntity) {
@@ -315,38 +313,22 @@ public class Resize {
 		if (ResizeConfig.MODIFIER.HARVEST_MODIFIER.get())
 			event.setNewSpeed(event.getOriginalSpeed() * (player.getHeight() / 1.8F));
 	}
-
-    /*
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void onFOVChange(FOVUpdateEvent event) {
-        if (event.getEntity() != null) {
-            PlayerEntity player = event.getEntity();
-            GameSettings settings = Minecraft.getInstance().gameSettings;
-            EffectInstance speed = player.getActivePotionEffect(Effects.SPEED);
-            float fov = (float) settings.fov;
-
-            if (player.isSprinting()) {
-                event.setNewfov(speed != null ? fov + ((0.1F * (speed.getAmplifier() + 1)) + 0.15F) : fov + 0.1F);
-            } else {
-                event.setNewfov(speed != null ? fov + (0.1F * (speed.getAmplifier() + 1)) : fov);
-            }
-        }
-    }
-     */
 	
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public void onRenderWorld(RenderWorldLastEvent event) {
 		PlayerEntity player = Minecraft.getInstance().player;
-		float scale = player.getHeight() / 1.8F;
+		
+		assert player != null;
+		float playerHeight = player.getHeight();
+		float scale = playerHeight / 1.8F;
 		
 		switch (Minecraft.getInstance().gameSettings.getPointOfView()) {
 			case THIRD_PERSON_BACK:
-				if (player.getHeight() > 1.8F) event.getMatrixStack().translate(0, 0, -scale * 2);
+				if (playerHeight > 1.8F) event.getMatrixStack().translate(0, 0, -scale * 2);
 				break;
 			case THIRD_PERSON_FRONT:
-				if (player.getHeight() > 1.8F) event.getMatrixStack().translate(0, 0, scale * 2);
+				if (playerHeight > 1.8F) event.getMatrixStack().translate(0, 0, scale * 2);
 				break;
 		}
 	}
@@ -390,6 +372,7 @@ public class Resize {
 		}
 	}
 	
+	//TODO: what is this?
 	@SubscribeEvent
 	public void onPlayerClone(PlayerEvent.Clone event) {
 		// Fetch & Copy Capability

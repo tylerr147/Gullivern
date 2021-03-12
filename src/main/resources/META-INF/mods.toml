@@ -1,28 +1,28 @@
 modLoader="javafml"
 loaderVersion="[31,)"
-issueTrackerURL="https://github.com/TeamKun/Gullivern/issues"
+issueTrackerURL="https://github.com/tylerr147/Resize/issues"
 license="MIT"
 
 [[mods]]
-modId="gulliver"
+modId="resize"
 version="${file.jarVersion}"
-displayName="Gullivern"
-displayURL="https://github.com/TeamKun/Gullivern"
+displayName="Resize"
+displayURL="https://github.com/tylerr147/Resize"
 logoFile="logo.png"
-credits="Kamesuta"
-authors="Kamesuta"
+credits="tylerr147, Kamesuta"
+authors="tylerr147"
 description='''
 A remake of some of the features from the Gulliver Mod.
 '''
-[[dependencies.gulliver]]
+[[dependencies.resize]]
     modId="forge" #mandatory
     mandatory=true #mandatory
     versionRange="[31,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.gulliver]]
+[[dependencies.resize]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4, 1.16.5]"
+    versionRange="[1.16.5]"
     ordering="NONE"
     side="BOTH"

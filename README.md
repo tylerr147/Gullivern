@@ -1,4 +1,7 @@
 Readme is broken, too lazy to rewrite it until actual mod is relatively done
+TODO:
+  split up the size related "tweaks" into separate mod, use IMC for communication about size
+  make it easier to change other entity size
 
 
 [![Latest Tag](https://img.shields.io/github/tag/Kamesuta/Resize-1.16.5.svg?label=Latest%20Tag&style=flat)](https://github.com/Kamesuta/Resize-1.16.5/tags)
